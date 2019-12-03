@@ -1,0 +1,15 @@
+{
+    "name": "dslabs/laravel-redaktor",
+    "description": "Laravel wrapper for Redaktor.",
+    "require": {
+        "php": "^7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "DSLabs\\LaravelRedaktor\\": "src/"
+        }
+    }
+}
