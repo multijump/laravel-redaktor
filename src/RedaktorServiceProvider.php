@@ -56,7 +56,14 @@ final class RedaktorServiceProvider extends ServiceProvider
 
     private static function setupChiefEditor(Application $app): void
     {
-        $app->alias(ChiefEditor::class, ChiefEditorInterface::class);
+        $app->singleton(ChiefEditor::class, ChiefEditor::class);
+
+        $app->singleton(IlluminateChiefEditor::class, static function (Application $app) {
+            return new IlluminateChiefEditor(
+                $app->make(ChiefEditor::class)
+            );
+        });
+        $app->alias(IlluminateChiefEditor::class, ChiefEditorInterface::class);
     }
 
     private static function configureRevisionsRegistry(Application $app): void

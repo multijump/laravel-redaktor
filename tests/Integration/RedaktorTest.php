@@ -6,7 +6,6 @@ namespace DSLabs\LaravelRedaktor;
 
 use DSLabs\LaravelRedaktor\Version\HeaderResolver;
 use DSLabs\LaravelRedaktor\Version\QueryStringResolver;
-use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
@@ -174,24 +173,14 @@ final class RedaktorTest extends TestCase
         self::assertInstanceOf(InMemoryRegistry::class, $registry);
     }
 
-    public function testBindsChiefEditor(): void
+    public function testThereIsOnlyASingleChiefEditor()
     {
         // Act
-        $chiefEditor = $this->app->make(ChiefEditor::class);
+        $instanceA = $this->app->make(ChiefEditorInterface::class);
+        $instanceB = $this->app->make(ChiefEditorInterface::class);
 
         // Assert
-        self::assertInstanceOf(ChiefEditor::class, $chiefEditor);
-        self::assertInstanceOf(ChiefEditorInterface::class, $chiefEditor);
-    }
-
-    public function testBindsChiefEditorInterface(): void
-    {
-        // Act
-        $chiefEditor = $this->app->make(ChiefEditorInterface::class);
-
-        // Assert
-        self::assertInstanceOf(ChiefEditorInterface::class, $chiefEditor);
-        self::assertInstanceOf(ChiefEditor::class, $chiefEditor);
+        self::assertSame($instanceA, $instanceB);
     }
 
     protected function getPackageProviders($app): array
