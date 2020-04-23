@@ -20,6 +20,13 @@
     "scripts": {
         "test": "phpunit tests/"
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DSLabs\\LaravelRedaktor\\RedaktorServiceProvider"
+            ]
+        }
+    },
     "repositories": [
         {
             "type": "path",
