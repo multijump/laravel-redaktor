@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor\Tests\Unit;
 
 use DSLabs\LaravelRedaktor\IlluminateEditor;
-use DSLabs\Redaktor\EditorInterface;
+use DSLabs\Redaktor\Editor\EditorInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;

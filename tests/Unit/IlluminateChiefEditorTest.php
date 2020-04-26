@@ -7,7 +7,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Unit;
 use DSLabs\LaravelRedaktor\IlluminateChiefEditor;
 use DSLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
-use DSLabs\Redaktor\EditorInterface;
+use DSLabs\Redaktor\Editor\EditorInterface;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

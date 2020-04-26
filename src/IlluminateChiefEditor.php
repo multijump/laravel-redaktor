@@ -6,7 +6,7 @@ namespace DSLabs\LaravelRedaktor;
 
 use DSLabs\LaravelRedaktor\Guard\IlluminateGuard;
 use DSLabs\Redaktor\ChiefEditorInterface;
-use DSLabs\Redaktor\EditorInterface;
+use DSLabs\Redaktor\Editor\EditorInterface;
 use Illuminate\Http\Request;
 
 final class IlluminateChiefEditor implements ChiefEditorInterface
