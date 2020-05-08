@@ -10,6 +10,9 @@ use Illuminate\Routing\RouteCollection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
+/**
+ * @see IlluminateGuard
+ */
 final class IlluminateGuardTest extends TestCase
 {
     public function testDoesNothingIfParameterIsAnIlluminateRouteCollectionInstance(): void

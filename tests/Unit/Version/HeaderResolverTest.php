@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
+/**
+ * @see HeaderResolver
+ */
 final class HeaderResolverTest extends TestCase
 {
     public function testRetrievesNullIfHeaderIsNotDefined(): void

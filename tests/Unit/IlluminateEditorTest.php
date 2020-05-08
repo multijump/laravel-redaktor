@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
+/**
+ * @see IlluminateEditor
+ */
 final class IlluminateEditorTest extends TestCase
 {
     public function testRefuseARouteCollectionInstanceOtherThanAnIlluminateOne(): void

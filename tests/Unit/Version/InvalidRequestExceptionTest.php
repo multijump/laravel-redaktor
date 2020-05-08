@@ -7,6 +7,9 @@ namespace DSLabs\LaravelRedaktor\Tests\Unit\Version;
 use DSLabs\LaravelRedaktor\Version\InvalidRequestException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @see InvalidRequestException
+ */
 final class InvalidRequestExceptionTest extends TestCase
 {
     public function testMakeFromAScalarArgument(): void

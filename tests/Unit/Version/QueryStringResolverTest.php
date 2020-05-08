@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
+/**
+ * @see QueryStringResolver
+ */
 final class QueryStringResolverTest extends TestCase
 {
     public function testRetrievesNullIfParameterIsNotDefined(): void

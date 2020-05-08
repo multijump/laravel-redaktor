@@ -13,6 +13,9 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
+/**
+ * @see IlluminateChiefEditor
+ */
 final class IlluminateChiefEditorTest extends TestCase
 {
     public function testDelegatesAppointingAnEditorToTheDeputyChiefEditor(): void
