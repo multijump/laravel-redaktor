@@ -65,7 +65,7 @@ final class IlluminateGuard
     {
         throw new InvalidArgumentException(
             sprintf(
-                'An instance of %s expected. Got %s.',
+                'Instance of %s expected. Got %s.',
                 $expectedInstance,
                 is_object($value)
                     ? get_class($value)

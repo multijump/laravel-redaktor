@@ -6,9 +6,9 @@ namespace DSLabs\LaravelRedaktor\Tests\Integration\Middleware;
 
 use DSLabs\LaravelRedaktor\Middleware\Redaktor;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
+use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\MessageRevision;
 use DSLabs\Redaktor\Revision\RoutingRevision;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;
 use Orchestra\Testbench\TestCase;
@@ -81,7 +81,7 @@ final class RedaktorTest extends TestCase
 
         // Act
         $middleware->handle(
-            new Request(),
+            Request::forVersion('foo'),
             static function (Request $request) use ($revisedRequest): Response {
                 // Assert
                 self::assertSame($revisedRequest, $request);
@@ -113,7 +113,7 @@ final class RedaktorTest extends TestCase
         // Act
         $originalResponse = new Response();
         $response = $middleware->handle(
-            new Request(),
+            Request::forVersion('foo'),
             static function () use ($originalResponse): Response {
                 return $originalResponse;
             }
@@ -145,7 +145,7 @@ final class RedaktorTest extends TestCase
 
         // Act
         $middleware->handle(
-            new Request(),
+            Request::forVersion('foo'),
             self::createDummyMiddlewareClosure()
         );
 
@@ -175,7 +175,7 @@ final class RedaktorTest extends TestCase
 
         // Act
         $middleware->handle(
-            new Request(),
+            Request::forVersion('foo'),
             self::createDummyMiddlewareClosure()
         );
 

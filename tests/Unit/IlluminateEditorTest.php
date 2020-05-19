@@ -6,6 +6,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Unit;
 
 use DSLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\Editor\EditorInterface;
+use DSLabs\Redaktor\Revision\Revision;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;
@@ -21,6 +22,40 @@ use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
  */
 final class IlluminateEditorTest extends TestCase
 {
+    public function testRetrievesTheBriefedRequest(): void
+    {
+        // Arrange
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->retrieveBriefedRequest()
+            ->willReturn($originalRequest = new Request());
+
+        $illuminateEditor = new IlluminateEditor($juniorEditor->reveal());
+
+        // Act
+        $briefedRequest = $illuminateEditor->retrieveBriefedRequest();
+
+        // Assert
+        self::assertSame($originalRequest, $briefedRequest);
+    }
+
+    public function testRetrievesTheBriefedRevisions(): void
+    {
+        // Arrange
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->retrieveBriefedRevisions()
+            ->willReturn($revisions = [
+                $this->prophesize(Revision::class)->reveal(),
+            ]);
+
+        $illuminateEditor = new IlluminateEditor($juniorEditor->reveal());
+
+        // Act
+        $briefedRevisions = $illuminateEditor->retrieveBriefedRevisions();
+
+        // Assert
+        self::assertSame($revisions, $briefedRevisions);
+    }
+
     public function testRefuseARouteCollectionInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
@@ -38,12 +73,12 @@ final class IlluminateEditorTest extends TestCase
     public function testRefuseReturningARouteCollectionInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
-        $juniorEditorMock = $this->prophesize(EditorInterface::class);
-        $juniorEditorMock->reviseRouting(Argument::any())
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseRouting(Argument::any())
             ->willReturn(new SymfonyRouteCollection());
 
         $editor = new IlluminateEditor(
-            $juniorEditorMock->reveal()
+            $juniorEditor->reveal()
         );
 
         // Assert
@@ -53,52 +88,52 @@ final class IlluminateEditorTest extends TestCase
         $editor->reviseRouting(new RouteCollection());
     }
 
-    public function testDelegateRevisingTheRoutesToTheAssistantEditor(): void
+    public function testDelegateRevisingTheRoutesToTheJuniorEditor(): void
     {
         // Arrange
-        $assistantEditorSpy = $this->prophesize(EditorInterface::class);
-        $assistantEditorSpy->reviseRouting(Argument::any())
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseRouting(Argument::any())
             ->willReturn(new RouteCollection());
 
         $editor = new IlluminateEditor(
-            $assistantEditorSpy->reveal()
+            $juniorEditor->reveal()
         );
 
         // Act
         $editor->reviseRouting($originalRouteCollection = new RouteCollection());
 
         // Assert
-        $assistantEditorSpy->reviseRouting($originalRouteCollection)
+        $juniorEditor->reviseRouting($originalRouteCollection)
             ->shouldHaveBeenCalled();
     }
 
-    public function testAssistantEditorReportsBackTheRevisedRoutes(): void
+    public function testJuniorEditorReportsBackTheRevisedRoutes(): void
     {
         // Arrange
-        $assistantEditorSpy = $this->prophesize(EditorInterface::class);
-        $assistantEditorSpy->reviseRouting(Argument::any())
-            ->willReturn($assistantRevisedRouteCollection = new RouteCollection());
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseRouting(Argument::any())
+            ->willReturn($juniorRevisedRouteCollection = new RouteCollection());
 
         $editor = new IlluminateEditor(
-            $assistantEditorSpy->reveal()
+            $juniorEditor->reveal()
         );
 
         // Act
         $revisedRouteCollection = $editor->reviseRouting(new RouteCollection());
 
         // Assert
-        self::assertSame($assistantRevisedRouteCollection, $revisedRouteCollection);
+        self::assertSame($juniorRevisedRouteCollection, $revisedRouteCollection);
     }
 
     public function testRefuseReturningARequestInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
-        $assistantEditorSpy = $this->prophesize(EditorInterface::class);
-        $assistantEditorSpy->reviseRequest()
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseRequest()
             ->willReturn(new SymfonyRequest());
 
         $editor = new IlluminateEditor(
-            $assistantEditorSpy->reveal()
+            $juniorEditor->reveal()
         );
 
         // Assert
@@ -108,41 +143,41 @@ final class IlluminateEditorTest extends TestCase
         $editor->reviseRequest();
     }
 
-    public function testDelegateRevisingTheRequestToTheAssistantEditor(): void
+    public function testDelegateRevisingTheRequestToTheJuniorEditor(): void
     {
         // Arrange
-        $assistantEditorSpy = $this->prophesize(EditorInterface::class);
-        $assistantEditorSpy->reviseRequest()
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseRequest()
             ->willReturn(new Request());
 
         $editor = new IlluminateEditor(
-            $assistantEditorSpy->reveal()
+            $juniorEditor->reveal()
         );
 
         // Act
         $editor->reviseRequest();
 
         // Assert
-        $assistantEditorSpy->reviseRequest()
+        $juniorEditor->reviseRequest()
             ->shouldHaveBeenCalled();
     }
 
-    public function testAssistantEditorReportsBackTheRevisedRequest(): void
+    public function testJuniorEditorReportsBackTheRevisedRequest(): void
     {
         // Arrange
-        $assistantEditorSpy = $this->prophesize(EditorInterface::class);
-        $assistantEditorSpy->reviseRequest()
-            ->willReturn($assistantRevisedRequest = new Request());
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseRequest()
+            ->willReturn($juniorRevisedRequest = new Request());
 
         $editor = new IlluminateEditor(
-            $assistantEditorSpy->reveal()
+            $juniorEditor->reveal()
         );
 
         // Act
         $revisedRequest = $editor->reviseRequest();
 
         // Assert
-        self::assertSame($assistantRevisedRequest, $revisedRequest);
+        self::assertSame($juniorRevisedRequest, $revisedRequest);
     }
 
     public function testRefuseAResponseInstanceOtherThanAnIlluminateOne(): void
@@ -162,12 +197,12 @@ final class IlluminateEditorTest extends TestCase
     public function testRefuseReturningAResponseInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
-        $assistantEditorMock = $this->prophesize(EditorInterface::class);
-        $assistantEditorMock->reviseResponse(Argument::any())
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseResponse(Argument::any())
             ->willReturn(new SymfonyResponse());
 
         $editor = new IlluminateEditor(
-            $assistantEditorMock->reveal()
+            $juniorEditor->reveal()
         );
 
         // Assert
@@ -177,40 +212,40 @@ final class IlluminateEditorTest extends TestCase
         $editor->reviseResponse(new Response());
     }
 
-    public function testDelegateRevisingTheResponseToTheAssistantEditor(): void
+    public function testDelegateRevisingTheResponseToTheJuniorEditor(): void
     {
         // Arrange
-        $assistantEditorSpy = $this->prophesize(EditorInterface::class);
-        $assistantEditorSpy->reviseResponse(Argument::any())
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseResponse(Argument::any())
             ->willReturn(new Response());
 
         $editor = new IlluminateEditor(
-            $assistantEditorSpy->reveal()
+            $juniorEditor->reveal()
         );
 
         // Act
         $editor->reviseResponse($originalResponse = new Response());
 
         // Assert
-        $assistantEditorSpy->reviseResponse($originalResponse)
+        $juniorEditor->reviseResponse($originalResponse)
             ->shouldHaveBeenCalled();
     }
 
-    public function testAssistantEditorReportsBackTheRevisedResponse(): void
+    public function testJuniorEditorReportsBackTheRevisedResponse(): void
     {
         // Arrange
-        $assistantEditorSpy = $this->prophesize(EditorInterface::class);
-        $assistantEditorSpy->reviseResponse(Argument::any())
-            ->willReturn($assistantRevisedResponse = new Response());
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+        $juniorEditor->reviseResponse(Argument::any())
+            ->willReturn($juniorRevisedResponse = new Response());
 
         $editor = new IlluminateEditor(
-            $assistantEditorSpy->reveal()
+            $juniorEditor->reveal()
         );
 
         // Act
         $revisedResponse = $editor->reviseResponse(new Response());
 
         // Assert
-        self::assertSame($assistantRevisedResponse, $revisedResponse);
+        self::assertSame($juniorRevisedResponse, $revisedResponse);
     }
 }

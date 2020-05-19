@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor;
 
+use DSLabs\LaravelRedaktor\Department\IlluminateDepartment;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
+use DSLabs\Redaktor\Department\EditorDepartment;
+use DSLabs\Redaktor\Department\EditorProvider;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
 use DSLabs\Redaktor\Version\VersionResolver;
@@ -19,7 +22,8 @@ final class RedaktorServiceProvider extends ServiceProvider
     {
         $this->setupConfiguration();
         self::setupVersionResolver($this->app);
-        self::configureRevisionsRegistry($this->app);
+        self::setupRevisionsRegistry($this->app);
+        self::setupEditorProvider($this->app);
         self::setupChiefEditor($this->app);
     }
 
@@ -54,19 +58,12 @@ final class RedaktorServiceProvider extends ServiceProvider
         );
     }
 
-    private static function setupChiefEditor(Application $app): void
+    private static function setupEditorProvider(Application $app): void
     {
-        $app->singleton(ChiefEditor::class, ChiefEditor::class);
-
-        $app->singleton(IlluminateChiefEditor::class, static function (Application $app) {
-            return new IlluminateChiefEditor(
-                $app->make(ChiefEditor::class)
-            );
-        });
-        $app->alias(IlluminateChiefEditor::class, ChiefEditorInterface::class);
+        $app->singleton(EditorProvider::class, EditorDepartment::class);
     }
 
-    private static function configureRevisionsRegistry(Application $app): void
+    private static function setupRevisionsRegistry(Application $app): void
     {
         $app->singleton(InMemoryRegistry::class, static function(Container $container) {
             $revisions = $container->get('config')->get('redaktor.revisions');
@@ -75,5 +72,11 @@ final class RedaktorServiceProvider extends ServiceProvider
         });
 
         $app->alias(InMemoryRegistry::class, Registry::class);
+    }
+
+    private static function setupChiefEditor(Application $app): void
+    {
+        $app->singleton(ChiefEditor::class);
+        $app->alias(ChiefEditor::class, ChiefEditorInterface::class);
     }
 }

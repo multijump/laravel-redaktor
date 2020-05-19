@@ -3,7 +3,7 @@
     "description": "Laravel wrapper for Redaktor.",
     "require": {
         "php": "^7.2",
-        "dslabs/redaktor": "dev-master@dev",
+        "dslabs/redaktor": "dev-master",
         "illuminate/http": "^6|^7",
         "illuminate/support": "^6|^7",
         "illuminate/routing": "^6|^7"
@@ -15,6 +15,11 @@
     "autoload": {
         "psr-4": {
             "DSLabs\\LaravelRedaktor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DSLabs\\LaravelRedaktor\\Tests\\": "tests/"
         }
     },
     "scripts": {

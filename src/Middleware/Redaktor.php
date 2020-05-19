@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor\Middleware;
 
 use Closure;
-use DSLabs\LaravelRedaktor\IlluminateChiefEditor;
+use DSLabs\LaravelRedaktor\Department\IlluminateDepartment;
 use DsLabs\LaravelRedaktor\IlluminateEditor;
+use DSLabs\Redaktor\ChiefEditorInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
@@ -14,7 +15,7 @@ use Illuminate\Routing\Router;
 final class Redaktor
 {
     /**
-     * @var IlluminateChiefEditor
+     * @var ChiefEditorInterface
      */
     private $chiefEditor;
 
@@ -22,18 +23,26 @@ final class Redaktor
      * @var Router
      */
     private $router;
+    /**
+     * @var IlluminateDepartment
+     */
+    private $illuminateDepartment;
 
     public function __construct(
-        IlluminateChiefEditor $chiefEditor,
+        ChiefEditorInterface $chiefEditor,
+        IlluminateDepartment $illuminateDepartment,
         Router $router
     ) {
         $this->chiefEditor = $chiefEditor;
         $this->router = $router;
+        $this->illuminateDepartment = $illuminateDepartment;
     }
 
     public function handle(Request $request, Closure $next): Response
     {
-        $editor = $this->chiefEditor->appointEditor($request);
+        $editor = $this->chiefEditor
+            ->speakTo($this->illuminateDepartment)
+            ->appointEditor($request);
 
         self::reviseRoutes($editor, $this->router);
 
