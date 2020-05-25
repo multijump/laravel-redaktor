@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor;
 
-use DSLabs\LaravelRedaktor\Department\IlluminateDepartment;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Department\EditorDepartment;
@@ -13,7 +12,6 @@ use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 final class RedaktorServiceProvider extends ServiceProvider
@@ -21,10 +19,10 @@ final class RedaktorServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->setupConfiguration();
-        self::setupVersionResolver($this->app);
-        self::setupRevisionsRegistry($this->app);
-        self::setupEditorProvider($this->app);
-        self::setupChiefEditor($this->app);
+        $this->setupVersionResolver();
+        $this->setupRevisionsRegistry();
+        $this->setupEditorProvider();
+        $this->setupChiefEditor();
     }
 
     private function setupConfiguration(): void
@@ -36,9 +34,9 @@ final class RedaktorServiceProvider extends ServiceProvider
         ]);
     }
 
-    private static function setupVersionResolver(Application $app): void
+    private function setupVersionResolver(): void
     {
-        $app->singleton(
+        $this->app->singleton(
             VersionResolver::class,
             static function(Container $container): VersionResolver {
                 $resolverConfig = $container->get('config')->get('redaktor.resolver');
@@ -58,25 +56,25 @@ final class RedaktorServiceProvider extends ServiceProvider
         );
     }
 
-    private static function setupEditorProvider(Application $app): void
+    private function setupEditorProvider(): void
     {
-        $app->singleton(EditorProvider::class, EditorDepartment::class);
+        $this->app->singleton(EditorProvider::class, EditorDepartment::class);
     }
 
-    private static function setupRevisionsRegistry(Application $app): void
+    private function setupRevisionsRegistry(): void
     {
-        $app->singleton(InMemoryRegistry::class, static function(Container $container) {
+        $this->app->singleton(InMemoryRegistry::class, static function(Container $container) {
             $revisions = $container->get('config')->get('redaktor.revisions');
 
             return new InMemoryRegistry($revisions);
         });
 
-        $app->alias(InMemoryRegistry::class, Registry::class);
+        $this->app->alias(InMemoryRegistry::class, Registry::class);
     }
 
-    private static function setupChiefEditor(Application $app): void
+    private function setupChiefEditor(): void
     {
-        $app->singleton(ChiefEditor::class);
-        $app->alias(ChiefEditor::class, ChiefEditorInterface::class);
+        $this->app->singleton(ChiefEditor::class);
+        $this->app->alias(ChiefEditor::class, ChiefEditorInterface::class);
     }
 }
