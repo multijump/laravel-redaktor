@@ -15,7 +15,7 @@ return [
     ],
 
     /*
-     * Add here your Revision closures, indexed by revision name.
+     * Add here your Revision definitions, indexed by its version name.
      */
     'revisions' => [
         //  '2020-04-10' => [
