@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Guard;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;
@@ -27,7 +28,7 @@ final class IlluminateGuard
     public static function assertRouteCollection($routes): void
     {
         if (!$routes instanceof RouteCollection) {
-            self::throwException(RouteCollection::class, $routes);
+            self::throwException([RouteCollection::class], $routes);
         }
     }
 
@@ -39,7 +40,7 @@ final class IlluminateGuard
     public static function assertRequest($request): void
     {
         if (!$request instanceof Request) {
-            self::throwException(Request::class, $request);
+            self::throwException([Request::class], $request);
         }
     }
 
@@ -50,23 +51,27 @@ final class IlluminateGuard
      */
     public static function assertResponse($response): void
     {
-        if (!$response instanceof Response) {
-            self::throwException(Response::class, $response);
+        if (!$response instanceof Response &&
+            !$response instanceof JsonResponse
+        ) {
+            self::throwException([Response::class, JsonResponse::class], $response);
         }
     }
 
     /**
-     * @param string $expectedInstance
+     * @param array $expectedInstances
      * @param $value
      *
-     * @throws InvalidArgumentException
      */
-    private static function throwException(string $expectedInstance, $value): void
+    private static function throwException(array $expectedInstances, $value): void
     {
+        $last = array_pop($expectedInstances);
+        $instancesString = implode(', ', $expectedInstances) . " or $last";
+
         throw new InvalidArgumentException(
             sprintf(
                 'Instance of %s expected. Got %s.',
-                $expectedInstance,
+                $instancesString,
                 is_object($value)
                     ? get_class($value)
                     : gettype($value)

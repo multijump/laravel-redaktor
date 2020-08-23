@@ -9,6 +9,7 @@ use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\MessageRevision;
 use DSLabs\Redaktor\Revision\RoutingRevision;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;
 use Orchestra\Testbench\TestCase;
@@ -183,9 +184,38 @@ final class RedaktorTest extends TestCase
         self::assertSame($revisedRoutes, $this->app->get('routes'));
     }
 
+    public function testSupportsJsonResponse(): void
+    {
+        // Arrange
+        $revisionProphecy = $this->createMessageRevisionProphecy(null, $revisedJsonResponse = new JsonResponse());
+
+        $this->app->get('config')->set(
+            'redaktor.revisions',
+            [
+                'foo' => [
+                    static function () use ($revisionProphecy) {
+                        return $revisionProphecy->reveal();
+                    }
+                ],
+            ]
+        );
+
+        /** @var Redaktor $middleware */
+        $middleware = $this->app->make(Redaktor::class);
+
+        // Act
+        $response = $middleware->handle(
+            Request::forVersion('foo'),
+            self::createDummyMiddlewareClosure()
+        );
+
+        // Assert
+        self::assertSame($revisedJsonResponse, $response);
+    }
+
     private function createMessageRevisionProphecy(
         Request $revisedRequest = null,
-        Response $revisedResponse = null
+        $revisedResponse = null
     ): ObjectProphecy {
         $revision = $this->prophesize(MessageRevision::class);
         $revision->isApplicable(Argument::any())->willReturn(true);

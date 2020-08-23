@@ -8,6 +8,7 @@ use Closure;
 use DSLabs\LaravelRedaktor\Department\IlluminateDepartment;
 use DsLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
@@ -38,7 +39,12 @@ final class Redaktor
         $this->illuminateDepartment = $illuminateDepartment;
     }
 
-    public function handle(Request $request, Closure $next): Response
+    /**
+     * @param Request $request
+     * @param Closure $next
+     * @return Response|JsonResponse
+     */
+    public function handle(Request $request, Closure $next)
     {
         $editor = $this->chiefEditor
             ->speakTo($this->illuminateDepartment)
