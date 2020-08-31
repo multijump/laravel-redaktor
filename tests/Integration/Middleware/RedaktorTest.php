@@ -6,19 +6,22 @@ namespace DSLabs\LaravelRedaktor\Tests\Integration\Middleware;
 
 use DSLabs\LaravelRedaktor\Middleware\Redaktor;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
+use DSLabs\LaravelRedaktor\Tests\Integration\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\MessageRevision;
 use DSLabs\Redaktor\Revision\RoutingRevision;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;
-use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
 final class RedaktorTest extends TestCase
 {
-    public function getPackageProviders($app)
+    use InteractsWithApplication;
+
+    protected function getPackageProviders(): array
     {
         return [
             RedaktorServiceProvider::class,
@@ -66,16 +69,15 @@ final class RedaktorTest extends TestCase
     {
         // Arrange
         $revisionProphecy = $this->createMessageRevisionProphecy($revisedRequest = new Request());
-        $this->app->get('config')->set(
-            'redaktor.revisions',
-            [
+        $this->withConfig([
+            'redaktor.revisions' => [
                 'foo' => [
                     static function () use ($revisionProphecy) {
                         return $revisionProphecy->reveal();
                     }
                 ],
-            ]
-        );
+            ],
+        ]);
 
         /** @var Redaktor $middleware */
         $middleware = $this->app->make(Redaktor::class);
@@ -96,17 +98,15 @@ final class RedaktorTest extends TestCase
     {
         // Arrange
         $revisionProphecy = $this->createMessageRevisionProphecy(null, $revisedResponse = new Response());
-
-        $this->app->get('config')->set(
-            'redaktor.revisions',
-            [
+        $this->withConfig([
+            'redaktor.revisions' => [
                 'foo' => [
                     static function () use ($revisionProphecy) {
                         return $revisionProphecy->reveal();
                     }
                 ],
-            ]
-        );
+            ],
+        ]);
 
         /** @var Redaktor $middleware */
         $middleware = $this->app->make(Redaktor::class);
@@ -129,17 +129,16 @@ final class RedaktorTest extends TestCase
     {
         // Arrange
         $revisionProphecy = $this->createRoutingRevisionProphecy();
-
-        $this->app->get('config')->set(
-            'redaktor.revisions',
-            [
+        $this->withConfig([
+            'redaktor.revisions' => [
                 'foo' => [
                     static function () use ($revisionProphecy) {
                         return $revisionProphecy->reveal();
                     }
                 ],
-            ]
-        );
+            ],
+        ]);
+        $originalRoutes = $this->app->make('router')->getRoutes();
 
         /** @var Redaktor $middleware */
         $middleware = $this->app->make(Redaktor::class);
@@ -151,7 +150,6 @@ final class RedaktorTest extends TestCase
         );
 
         // Assert
-        $originalRoutes = $this->app->get('routes');
         $revisionProphecy->__invoke($originalRoutes)->shouldHaveBeenCalled();
     }
 
@@ -159,17 +157,15 @@ final class RedaktorTest extends TestCase
     {
         // Arrange
         $revisionProphecy = $this->createRoutingRevisionProphecy($revisedRoutes = new RouteCollection());
-
-        $this->app->get('config')->set(
-            'redaktor.revisions',
-            [
+        $this->withConfig([
+            'redaktor.revisions' => [
                 'foo' => [
                     static function () use ($revisionProphecy) {
                         return $revisionProphecy->reveal();
                     }
                 ],
-            ]
-        );
+            ],
+        ]);
 
         /** @var Redaktor $middleware */
         $middleware = $this->app->make(Redaktor::class);
@@ -189,16 +185,15 @@ final class RedaktorTest extends TestCase
         // Arrange
         $revisionProphecy = $this->createMessageRevisionProphecy(null, $revisedJsonResponse = new JsonResponse());
 
-        $this->app->get('config')->set(
-            'redaktor.revisions',
-            [
+        $this->withConfig([
+            'redaktor.revisions' => [
                 'foo' => [
                     static function () use ($revisionProphecy) {
                         return $revisionProphecy->reveal();
                     }
                 ],
-            ]
-        );
+            ],
+        ]);
 
         /** @var Redaktor $middleware */
         $middleware = $this->app->make(Redaktor::class);

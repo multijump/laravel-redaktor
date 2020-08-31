@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DSLabs\LaravelRedaktor;
+namespace DSLabs\LaravelRedaktor\Tests\Integration;
 
+use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Version\HeaderResolver;
 use DSLabs\LaravelRedaktor\Version\QueryStringResolver;
 use DSLabs\Redaktor\ChiefEditorInterface;
@@ -13,10 +14,19 @@ use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\TestCase;
 
 final class RedaktorTest extends TestCase
 {
+    use InteractsWithApplication;
+
+    protected function getPackageProviders(): array
+    {
+        return [
+            RedaktorServiceProvider::class,
+        ];
+    }
+
     public function testDefaultConfigurationFormat(): void
     {
         // Act
@@ -54,7 +64,9 @@ final class RedaktorTest extends TestCase
     public function testVersionResolverIsNotInstantiable(): void
     {
         // Arrange
-        $this->app->get('config')->set('redaktor.resolver.id', 'foo');
+        $this->withConfig([
+            'redaktor.resolver.id' => 'foo'
+        ]);
 
         // Assert
         $this->expectException(BindingResolutionException::class);
@@ -66,7 +78,9 @@ final class RedaktorTest extends TestCase
     public function testVersionResolverDoesNotImplementVersionResolverInterface(): void
     {
         // Arrange
-        $this->app->get('config')->set('redaktor.resolver.id', get_class(new class {}));
+        $this->withConfig([
+            'redaktor.resolver.id' => get_class(new class {}),
+        ]);
 
         // Assert
         $this->expectException(\InvalidArgumentException::class);
@@ -91,11 +105,12 @@ final class RedaktorTest extends TestCase
     public function testRetrievesRevisionNameUsingConfiguredResolver(): void
     {
         // Arrange
-        $config = $this->app->get('config');
-        $config->set('redaktor.resolver', [
-            'id' => QueryStringResolver::class,
-            'config' => [
-                'name' => 'foo'
+        $this->withConfig([
+            'redaktor.resolver' => [
+                'id' => QueryStringResolver::class,
+                'config' => [
+                    'name' => 'foo',
+                ]
             ]
         ]);
 
@@ -147,15 +162,14 @@ final class RedaktorTest extends TestCase
     public function testInMemoryRegistryIsConfigured(): void
     {
         // Arrange
-        $this->app->get('config')->set(
-            'redaktor.revisions',
-            [
+        $this->withConfig([
+            'redaktor.revisions' => [
                 'foo' => [
-                    static function() { },
-                    static function() { },
+                    static function () { },
+                    static function () { },
                 ]
             ]
-        );
+        ]);
 
         // Act
         $registry = $this->app->make(InMemoryRegistry::class);
@@ -181,12 +195,5 @@ final class RedaktorTest extends TestCase
 
         // Assert
         self::assertSame($instanceA, $instanceB);
-    }
-
-    protected function getPackageProviders($app): array
-    {
-        return [
-            RedaktorServiceProvider::class,
-        ];
     }
 }

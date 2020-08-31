@@ -24,6 +24,7 @@ final class Redaktor
      * @var Router
      */
     private $router;
+
     /**
      * @var IlluminateDepartment
      */
