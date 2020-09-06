@@ -12,6 +12,9 @@ use DSLabs\Redaktor\Revision\Revision;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @see IlluminateDepartment
+ */
 final class IlluminateDepartmentTest extends TestCase
 {
     public function testProvideIlluminateEditor(): void

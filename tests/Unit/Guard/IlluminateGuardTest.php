@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DSLabs\LaravelRedaktor\Tests\Unit;
+namespace DSLabs\LaravelRedaktor\Tests\Unit\Guard;
 
 use DSLabs\LaravelRedaktor\Guard\IlluminateGuard;
 use Illuminate\Http\JsonResponse;

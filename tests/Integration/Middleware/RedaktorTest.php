@@ -17,6 +17,9 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
+/**
+ * @see Redaktor
+ */
 final class RedaktorTest extends TestCase
 {
     use InteractsWithApplication;

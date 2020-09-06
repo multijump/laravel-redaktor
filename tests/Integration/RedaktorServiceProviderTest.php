@@ -16,7 +16,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use PHPUnit\Framework\TestCase;
 
-final class RedaktorTest extends TestCase
+/**
+ * @see RedaktorServiceProvider
+ */
+final class RedaktorServiceProviderTest extends TestCase
 {
     use InteractsWithApplication;
 
