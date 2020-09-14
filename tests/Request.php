@@ -28,4 +28,15 @@ final class Request extends IlluminateRequest
         );
     }
 
+    public static function createForVersion(string $version, string $uri, string $method = 'GET'): self
+    {
+        return self::create(
+            $uri,
+            $method,
+            [],
+            [],
+            [],
+            ['HTTP_API-Version' => $version ]
+        );
+    }
 }

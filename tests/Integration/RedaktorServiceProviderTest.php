@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor\Tests\Integration;
 
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
+use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
+use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Version\HeaderResolver;
 use DSLabs\LaravelRedaktor\Version\QueryStringResolver;
 use DSLabs\Redaktor\ChiefEditorInterface;
@@ -22,8 +24,9 @@ use PHPUnit\Framework\TestCase;
 final class RedaktorServiceProviderTest extends TestCase
 {
     use InteractsWithApplication;
+    use InteractsWithConfiguration;
 
-    protected function getPackageProviders(): array
+    protected function getServiceProviders(): array
     {
         return [
             RedaktorServiceProvider::class,

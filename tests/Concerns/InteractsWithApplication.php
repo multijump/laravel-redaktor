@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace DSLabs\LaravelRedaktor\Tests\Integration;
+namespace DSLabs\LaravelRedaktor\Tests\Concerns;
 
 use Illuminate\Config\Repository;
-use Illuminate\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Http\Kernel;
 
 /**
  * @property-read Application $app
@@ -13,22 +14,32 @@ use Illuminate\Foundation\Application;
 trait InteractsWithApplication
 {
     /**
-     * @var array
+     * Provides a list of Service Providers to be registered.
      */
-    private $config = [];
+    abstract protected function getServiceProviders(Application $app): array;
 
-    protected function withConfig(array $config): void
+    /**
+     * Provides the Application instance
+     *
+     * @return Application
+     */
+    protected function getApplication(): Application
     {
-        $this->config = $config;
+        return $this->app;
     }
 
-    private function createApplication(array $config): Application
+    protected function getKernel(): Kernel
     {
-        $app = new Application(__DIR__ . '/../../vendor/laravel/laravel/');
+        return $this->app->make(Kernel::class);
+    }
+
+    private function createApplication(): Application
+    {
+        $app = new \Illuminate\Foundation\Application(__DIR__ . '/../../vendor/laravel/laravel/');
 
         $app->singleton(
             \Illuminate\Contracts\Http\Kernel::class,
-            \Illuminate\Foundation\Http\Kernel::class
+            \App\Http\Kernel::class
         );
 
         $app->singleton(
@@ -50,7 +61,6 @@ trait InteractsWithApplication
 
         $this->loadPackageServiceProviders($app);
         $this->setupApplication($app);
-        $this->overrideConfig($app, $config);
         $this->bootstrapServiceProviders($app);
 
         return $app;
@@ -60,7 +70,7 @@ trait InteractsWithApplication
     {
         /** @var Repository $configRepo */
         $configRepo = $app->make('config');
-        foreach ($this->getPackageProviders($app) as $packageProvider) {
+        foreach ($this->getServiceProviders($app) as $packageProvider) {
             $configRepo->push('app.providers', $packageProvider);
         }
     }
@@ -75,24 +85,15 @@ trait InteractsWithApplication
         ]);
     }
 
-    private function overrideConfig(Application $app, array $overrides): void
-    {
-        if ($overrides) {
-            $app->make('config')->set($overrides);
-        }
-    }
-
     private function bootstrapServiceProviders(Application $app): void
     {
         $app->boot();
     }
 
-    abstract protected function getPackageProviders(Application $app);
-
     public function __get($name): Application
     {
         if ($name === 'app') {
-            return $this->app = $this->createApplication($this->config);
+            return $this->app = $this->createApplication();
         }
 
         throw new \ErrorException(

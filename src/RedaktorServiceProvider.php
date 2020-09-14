@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor;
 
+use DSLabs\LaravelRedaktor\Middleware\Redaktor;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Department\EditorDepartment;
@@ -12,6 +13,7 @@ use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 
 final class RedaktorServiceProvider extends ServiceProvider
@@ -23,6 +25,14 @@ final class RedaktorServiceProvider extends ServiceProvider
         $this->setupRevisionsRegistry();
         $this->setupEditorProvider();
         $this->setupChiefEditor();
+    }
+
+    public function boot(): void
+    {
+        /** @var \App\Http\Kernel $kernel */
+        $kernel = $this->app->make(Kernel::class);
+
+        $kernel->appendMiddlewareToGroup('api', Redaktor::class);
     }
 
     private function setupConfiguration(): void

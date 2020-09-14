@@ -8,6 +8,7 @@ use Closure;
 use DSLabs\LaravelRedaktor\Department\IlluminateDepartment;
 use DsLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -30,14 +31,21 @@ final class Redaktor
      */
     private $illuminateDepartment;
 
+    /**
+     * @var Application
+     */
+    private $app;
+
     public function __construct(
         ChiefEditorInterface $chiefEditor,
         IlluminateDepartment $illuminateDepartment,
-        Router $router
+        Router $router,
+        Application $app
     ) {
         $this->chiefEditor = $chiefEditor;
         $this->router = $router;
         $this->illuminateDepartment = $illuminateDepartment;
+        $this->app = $app;
     }
 
     /**
@@ -54,7 +62,7 @@ final class Redaktor
         self::reviseRoutes($editor, $this->router);
 
         $response = $next(
-            $editor->reviseRequest()
+            $this->app->instance('request', $editor->reviseRequest())
         );
 
         return $editor->reviseResponse($response);

@@ -6,7 +6,8 @@ namespace DSLabs\LaravelRedaktor\Tests\Integration\Middleware;
 
 use DSLabs\LaravelRedaktor\Middleware\Redaktor;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
-use DSLabs\LaravelRedaktor\Tests\Integration\InteractsWithApplication;
+use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
+use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\MessageRevision;
 use DSLabs\Redaktor\Revision\RoutingRevision;
@@ -23,8 +24,9 @@ use Prophecy\Prophecy\ObjectProphecy;
 final class RedaktorTest extends TestCase
 {
     use InteractsWithApplication;
+    use InteractsWithConfiguration;
 
-    protected function getPackageProviders(): array
+    protected function getServiceProviders(): array
     {
         return [
             RedaktorServiceProvider::class,
@@ -126,61 +128,6 @@ final class RedaktorTest extends TestCase
         // Assert
         $revisionProphecy->applyToResponse($originalResponse)->shouldHaveBeenCalled();
         self::assertSame($revisedResponse, $response);
-    }
-
-    public function testOriginalRoutesCollectionIsPassedInToTheRevision(): void
-    {
-        // Arrange
-        $revisionProphecy = $this->createRoutingRevisionProphecy();
-        $this->withConfig([
-            'redaktor.revisions' => [
-                'foo' => [
-                    static function () use ($revisionProphecy) {
-                        return $revisionProphecy->reveal();
-                    }
-                ],
-            ],
-        ]);
-        $originalRoutes = $this->app->make('router')->getRoutes();
-
-        /** @var Redaktor $middleware */
-        $middleware = $this->app->make(Redaktor::class);
-
-        // Act
-        $middleware->handle(
-            Request::forVersion('foo'),
-            self::createDummyMiddlewareClosure()
-        );
-
-        // Assert
-        $revisionProphecy->__invoke($originalRoutes)->shouldHaveBeenCalled();
-    }
-
-    public function testRevisedRoutesCollectionIsUpdated(): void
-    {
-        // Arrange
-        $revisionProphecy = $this->createRoutingRevisionProphecy($revisedRoutes = new RouteCollection());
-        $this->withConfig([
-            'redaktor.revisions' => [
-                'foo' => [
-                    static function () use ($revisionProphecy) {
-                        return $revisionProphecy->reveal();
-                    }
-                ],
-            ],
-        ]);
-
-        /** @var Redaktor $middleware */
-        $middleware = $this->app->make(Redaktor::class);
-
-        // Act
-        $middleware->handle(
-            Request::forVersion('foo'),
-            self::createDummyMiddlewareClosure()
-        );
-
-        // Assert
-        self::assertSame($revisedRoutes, $this->app->get('routes'));
     }
 
     public function testSupportsJsonResponse(): void
