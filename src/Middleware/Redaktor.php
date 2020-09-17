@@ -6,9 +6,9 @@ namespace DSLabs\LaravelRedaktor\Middleware;
 
 use Closure;
 use DSLabs\LaravelRedaktor\Department\IlluminateDepartment;
-use DsLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
-use Illuminate\Contracts\Foundation\Application;
+use DSLabs\Redaktor\Department\EditorDepartment;
+use DSLabs\Redaktor\Editor\EditorInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -22,30 +22,23 @@ final class Redaktor
     private $chiefEditor;
 
     /**
+     * @var IlluminateDepartment
+     */
+    private $editorDepartment;
+
+    /**
      * @var Router
      */
     private $router;
 
-    /**
-     * @var IlluminateDepartment
-     */
-    private $illuminateDepartment;
-
-    /**
-     * @var Application
-     */
-    private $app;
-
     public function __construct(
         ChiefEditorInterface $chiefEditor,
-        IlluminateDepartment $illuminateDepartment,
-        Router $router,
-        Application $app
+        EditorDepartment $editorDepartment,
+        Router $router
     ) {
         $this->chiefEditor = $chiefEditor;
+        $this->editorDepartment = $editorDepartment;
         $this->router = $router;
-        $this->illuminateDepartment = $illuminateDepartment;
-        $this->app = $app;
     }
 
     /**
@@ -56,19 +49,19 @@ final class Redaktor
     public function handle(Request $request, Closure $next)
     {
         $editor = $this->chiefEditor
-            ->speakTo($this->illuminateDepartment)
+            ->speakTo($this->editorDepartment)
             ->appointEditor($request);
 
         self::reviseRoutes($editor, $this->router);
 
         $response = $next(
-            $this->app->instance('request', $editor->reviseRequest())
+            $editor->reviseRequest()
         );
 
         return $editor->reviseResponse($response);
     }
 
-    private static function reviseRoutes(IlluminateEditor $editor, Router $router): void
+    private static function reviseRoutes(EditorInterface $editor, Router $router): void
     {
         $routes = $router->getRoutes();
         $revisedRoutes = $editor->reviseRouting($routes);

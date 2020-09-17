@@ -31,8 +31,7 @@ final class RedaktorServiceProvider extends ServiceProvider
     {
         /** @var \App\Http\Kernel $kernel */
         $kernel = $this->app->make(Kernel::class);
-
-        $kernel->appendMiddlewareToGroup('api', Redaktor::class);
+        $kernel->pushMiddleware(Redaktor::class);
     }
 
     private function setupConfiguration(): void

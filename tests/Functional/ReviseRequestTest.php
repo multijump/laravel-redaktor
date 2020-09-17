@@ -55,7 +55,7 @@ final class ReviseRequestTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createRequestRevision($revisedRequest = Request::create('/baz')),
+                    self::createRequestRevision($revisedRequest = Request::create('/foo')),
                 ],
             ]
         );

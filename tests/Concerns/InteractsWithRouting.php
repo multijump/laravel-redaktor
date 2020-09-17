@@ -34,7 +34,5 @@ trait InteractsWithRouting
                 return new Response();
             }
         );
-
-        $route->middleware('api');
     }
 }
