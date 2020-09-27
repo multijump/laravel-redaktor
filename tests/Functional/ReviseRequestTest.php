@@ -28,9 +28,10 @@ final class ReviseRequestTest extends TestCase
         ];
     }
 
-    public function testRequestLifeCycleWithNoRevisionsRegistered(): void
+    public function testApiRequestLifeCycleWithNoRevisionsRegistered(): void
     {
         // Arrange
+        $this->withoutExceptionHandling();
         $originalRequest = Request::create('/foo');
         $this->addRoute(
             '/foo',
@@ -39,7 +40,6 @@ final class ReviseRequestTest extends TestCase
                 self::assertSame($originalRequest, $request);
             }
         );
-        $this->withoutExceptionHandling();
 
         // Act
         $this->getKernel()->handle(

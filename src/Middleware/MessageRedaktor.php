@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor\Middleware;
 
 use Closure;
-use DSLabs\LaravelRedaktor\Department\IlluminateDepartment;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Department\EditorDepartment;
-use DSLabs\Redaktor\Editor\EditorInterface;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Router;
 
-final class Redaktor
+final class MessageRedaktor
 {
     /**
      * @var ChiefEditorInterface
@@ -22,23 +20,23 @@ final class Redaktor
     private $chiefEditor;
 
     /**
-     * @var IlluminateDepartment
+     * @var EditorDepartment
      */
     private $editorDepartment;
 
     /**
-     * @var Router
+     * @var Container
      */
-    private $router;
+    private $container;
 
     public function __construct(
         ChiefEditorInterface $chiefEditor,
         EditorDepartment $editorDepartment,
-        Router $router
+        Container $container
     ) {
         $this->chiefEditor = $chiefEditor;
         $this->editorDepartment = $editorDepartment;
-        $this->router = $router;
+        $this->container = $container;
     }
 
     /**
@@ -52,19 +50,10 @@ final class Redaktor
             ->speakTo($this->editorDepartment)
             ->appointEditor($request);
 
-        self::reviseRoutes($editor, $this->router);
-
         $response = $next(
-            $editor->reviseRequest()
+            $this->container->instance('request', $editor->reviseRequest())
         );
 
         return $editor->reviseResponse($response);
-    }
-
-    private static function reviseRoutes(EditorInterface $editor, Router $router): void
-    {
-        $routes = $router->getRoutes();
-        $revisedRoutes = $editor->reviseRouting($routes);
-        $router->setRoutes($revisedRoutes);
     }
 }

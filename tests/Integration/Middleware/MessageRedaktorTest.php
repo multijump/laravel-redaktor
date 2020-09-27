@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Tests\Integration\Middleware;
 
-use DSLabs\LaravelRedaktor\Middleware\Redaktor;
+use DSLabs\LaravelRedaktor\Middleware\MessageRedaktor;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
@@ -19,9 +19,9 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
 /**
- * @see Redaktor
+ * @see MessageRedaktor
  */
-final class RedaktorTest extends TestCase
+final class MessageRedaktorTest extends TestCase
 {
     use InteractsWithApplication;
     use InteractsWithConfiguration;
@@ -36,8 +36,8 @@ final class RedaktorTest extends TestCase
     public function testNextClosureIsCalledWithOriginalRequestIfNoRevisionsAreRegistered(): void
     {
         // Arrange
-        /** @var Redaktor $middleware */
-        $middleware = $this->app->make(Redaktor::class);
+        /** @var MessageRedaktor $middleware */
+        $middleware = $this->app->make(MessageRedaktor::class);
 
         // Act
         $middleware->handle(
@@ -54,8 +54,8 @@ final class RedaktorTest extends TestCase
     public function testMiddlewareReturnsOriginalResponseIfNoRevisionsAreRegistered(): void
     {
         // Arrange
-        /** @var Redaktor $middleware */
-        $middleware = $this->app->make(Redaktor::class);
+        /** @var MessageRedaktor $middleware */
+        $middleware = $this->app->make(MessageRedaktor::class);
         $originalResponse = new Response();
 
         // Act
@@ -84,8 +84,8 @@ final class RedaktorTest extends TestCase
             ],
         ]);
 
-        /** @var Redaktor $middleware */
-        $middleware = $this->app->make(Redaktor::class);
+        /** @var MessageRedaktor $middleware */
+        $middleware = $this->app->make(MessageRedaktor::class);
 
         // Act
         $middleware->handle(
@@ -113,8 +113,8 @@ final class RedaktorTest extends TestCase
             ],
         ]);
 
-        /** @var Redaktor $middleware */
-        $middleware = $this->app->make(Redaktor::class);
+        /** @var MessageRedaktor $middleware */
+        $middleware = $this->app->make(MessageRedaktor::class);
 
         // Act
         $originalResponse = new Response();
@@ -145,8 +145,8 @@ final class RedaktorTest extends TestCase
             ],
         ]);
 
-        /** @var Redaktor $middleware */
-        $middleware = $this->app->make(Redaktor::class);
+        /** @var MessageRedaktor $middleware */
+        $middleware = $this->app->make(MessageRedaktor::class);
 
         // Act
         $response = $middleware->handle(
@@ -166,15 +166,6 @@ final class RedaktorTest extends TestCase
         $revision->isApplicable(Argument::any())->willReturn(true);
         $revision->applyToRequest(Argument::any())->willReturn($revisedRequest ?? new Request());
         $revision->applyToResponse(Argument::any())->willReturn($revisedResponse ?? new Response());
-
-        return $revision;
-    }
-
-    private function createRoutingRevisionProphecy(
-        $revisedRoutesCollection = null
-    ): ObjectProphecy {
-        $revision = $this->prophesize(RoutingRevision::class);
-        $revision->__invoke(Argument::any())->willReturn($revisedRoutesCollection ?? new RouteCollection());
 
         return $revision;
     }

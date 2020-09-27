@@ -6,6 +6,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Concerns;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 
 trait InteractsWithRouting
@@ -21,8 +22,11 @@ trait InteractsWithRouting
      * @param string $uri
      * @param array|string $methods
      * @param \Closure|array|null $action
+     * @param string|array $middleware
+     *
+     * @return Route
      */
-    protected function addRoute(string $uri, $methods = 'GET', $action = null): void
+    protected function addRoute(string $uri, $methods = 'GET', $action = null, $middleware = 'api'): Route
     {
         /** @var Router $router */
         $router = $this->getApplication()->make('router');
@@ -34,5 +38,9 @@ trait InteractsWithRouting
                 return new Response();
             }
         );
+
+        $middleware && $route->middleware($middleware);
+
+        return $route;
     }
 }
