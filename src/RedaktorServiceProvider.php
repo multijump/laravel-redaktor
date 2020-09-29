@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor;
 
 use DSLabs\LaravelRedaktor\Middleware\MessageRedaktor;
+use DSLabs\LaravelRedaktor\Middleware\RoutingRedaktor;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Department\EditorDepartment;
@@ -31,6 +32,7 @@ final class RedaktorServiceProvider extends ServiceProvider
     {
         /** @var \App\Http\Kernel $kernel */
         $kernel = $this->app->make(Kernel::class);
+        $kernel->pushMiddleware(RoutingRedaktor::class);
         $kernel->appendMiddlewareToGroup('api', MessageRedaktor::class);
     }
 
