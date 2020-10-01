@@ -35,7 +35,7 @@ trait InteractsWithApplication
     }
 
     /**
-     * Clean up so next test runs
+     * Clean up so next test runs.
      */
     protected function tearDown(): void
     {
@@ -46,20 +46,24 @@ trait InteractsWithApplication
     }
 
     /**
-     * Provides the Application instance
-     *
-     * @return Application
+     * Provides the Application instance.
      */
     protected function getApplication(): Application
     {
         return $this->app;
     }
 
+    /**
+     * Provides the Http Kernel instance.
+     */
     protected function getKernel(): Kernel
     {
         return $this->app->make(Kernel::class);
     }
 
+    /**
+     * Creates and bootstraps an Application instance.
+     */
     private function createApplication(): Application
     {
         /** @var Application $app */

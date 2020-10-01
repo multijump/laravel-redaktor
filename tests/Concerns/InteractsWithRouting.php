@@ -12,7 +12,7 @@ use Illuminate\Routing\Router;
 trait InteractsWithRouting
 {
     /**
-     * Provides the Application instance
+     * Provides the Application instance.
      *
      * @return Application
      */

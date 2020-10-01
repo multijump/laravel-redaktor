@@ -42,6 +42,7 @@ final class MessageRedaktor
     /**
      * @param Request $request
      * @param Closure $next
+     *
      * @return Response|JsonResponse
      */
     public function handle(Request $request, Closure $next)

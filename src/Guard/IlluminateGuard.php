@@ -61,7 +61,6 @@ final class IlluminateGuard
     /**
      * @param array $expectedInstances
      * @param $value
-     *
      */
     private static function throwException(array $expectedInstances, $value): void
     {

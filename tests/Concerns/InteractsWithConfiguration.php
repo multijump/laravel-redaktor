@@ -9,7 +9,7 @@ use Illuminate\Contracts\Foundation\Application;
 trait InteractsWithConfiguration
 {
     /**
-     * Provides the Application instance
+     * Provides the Application instance.
      *
      * @return Application
      */
@@ -18,9 +18,8 @@ trait InteractsWithConfiguration
     /**
      * Set a given configuration value.
      *
-     * @param  array|string  $key
-     * @param  mixed  $value
-     * @return void
+     * @param array|string $key
+     * @param mixed $value
      */
     protected function withConfig($key, $value = null): void
     {

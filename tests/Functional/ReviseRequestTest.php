@@ -37,6 +37,7 @@ final class ReviseRequestTest extends TestCase
             '/foo',
             'GET',
             static function (IlluminateRequest $request) use ($originalRequest) {
+                // Assert
                 self::assertSame($originalRequest, $request);
             }
         );
