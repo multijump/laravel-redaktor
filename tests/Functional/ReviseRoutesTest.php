@@ -8,6 +8,7 @@ use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithRouting;
+use DSLabs\LaravelRedaktor\Tests\Doubles\RoutingRevisionStub;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\RoutingRevision;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithExceptionHandling;
@@ -15,7 +16,6 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use PHPUnit\Framework\TestCase;
-
 
 final class ReviseRoutesTest extends TestCase
 {
@@ -49,7 +49,7 @@ final class ReviseRoutesTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createRoutingRevision($revisedRoutes),
+                    self::createRoutingRevisionDefinition($revisedRoutes),
                 ],
             ]
         );
@@ -74,7 +74,7 @@ final class ReviseRoutesTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createRoutingRevision(new RouteCollection()),
+                    self::createRoutingRevisionDefinition(new RouteCollection()),
                 ],
             ]
         );
@@ -93,24 +93,10 @@ final class ReviseRoutesTest extends TestCase
         self::assertSame(404, $notFoundResponse->getStatusCode());
     }
 
-    private static function createRoutingRevision(RouteCollection $routes): \Closure
+    private static function createRoutingRevisionDefinition(RouteCollection $revisedRoutes): \Closure
     {
-        return static function () use ($routes): RoutingRevision {
-
-            return new class($routes) implements RoutingRevision {
-
-                private $routes;
-
-                public function __construct(RouteCollection $routes)
-                {
-                    $this->routes = $routes;
-                }
-
-                public function __invoke(iterable $routes): iterable
-                {
-                    return $this->routes;
-                }
-            };
+        return static function () use ($revisedRoutes): RoutingRevision {
+            return new RoutingRevisionStub($revisedRoutes);
         };
     }
 }

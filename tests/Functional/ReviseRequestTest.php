@@ -8,6 +8,7 @@ use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithRouting;
+use DSLabs\LaravelRedaktor\Tests\Doubles\RequestRevisionStub;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\RequestRevision;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithExceptionHandling;
@@ -56,7 +57,7 @@ final class ReviseRequestTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createRequestRevision($revisedRequest = Request::create('/foo')),
+                    self::createRequestRevisionDefinition($revisedRequest = Request::create('/foo')),
                 ],
             ]
         );
@@ -84,7 +85,7 @@ final class ReviseRequestTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createRequestRevision(Request::create('/baz')),
+                    self::createRequestRevisionDefinition(Request::create('/baz')),
                 ],
             ]
         );
@@ -105,29 +106,10 @@ final class ReviseRequestTest extends TestCase
         );
     }
 
-    private static function createRequestRevision(Request $request): \Closure
+    private static function createRequestRevisionDefinition(Request $revisedRequest): \Closure
     {
-        return static function () use ($request): RequestRevision {
-
-            return new class($request) implements RequestRevision {
-
-                private $request;
-
-                public function __construct(IlluminateRequest $request)
-                {
-                    $this->request = $request;
-                }
-
-                public function isApplicable(object $request): bool
-                {
-                    return true;
-                }
-
-                public function applyToRequest(object $request): object
-                {
-                    return $this->request;
-                }
-            };
+        return static function () use ($revisedRequest): RequestRevision {
+            return new RequestRevisionStub($revisedRequest, true);
         };
     }
 }

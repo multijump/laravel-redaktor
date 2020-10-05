@@ -8,13 +8,12 @@ use DSLabs\LaravelRedaktor\Middleware\MessageRedaktor;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
+use DSLabs\LaravelRedaktor\Tests\Doubles\MessageRevisionStub;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\MessageRevision;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 
 /**
  * @see MessageRedaktor
@@ -71,13 +70,10 @@ final class MessageRedaktorTest extends TestCase
     public function testNextClosureIsCalledWithTheRevisedRequest(): void
     {
         // Arrange
-        $revisionProphecy = $this->createMessageRevisionProphecy($revisedRequest = new Request());
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
-                    static function () use ($revisionProphecy): object {
-                        return $revisionProphecy->reveal();
-                    }
+                    self::createMessageRevisionDefinition($revisedRequest = new Request()),
                 ],
             ],
         ]);
@@ -100,13 +96,10 @@ final class MessageRedaktorTest extends TestCase
     public function testRevisesResponseReturnedByNextClosure(): void
     {
         // Arrange
-        $revisionProphecy = $this->createMessageRevisionProphecy(null, $revisedResponse = new Response());
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
-                    static function () use ($revisionProphecy): object {
-                        return $revisionProphecy->reveal();
-                    }
+                    self::createMessageRevisionDefinition(null, $revisedResponse = new Response()),
                 ],
             ],
         ]);
@@ -127,14 +120,11 @@ final class MessageRedaktorTest extends TestCase
     public function testSupportsJsonResponse(): void
     {
         // Arrange
-        $revisionProphecy = $this->createMessageRevisionProphecy(null, $revisedJsonResponse = new JsonResponse());
 
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
-                    static function () use ($revisionProphecy): object {
-                        return $revisionProphecy->reveal();
-                    }
+                    self::createMessageRevisionDefinition(null, $revisedJsonResponse = new JsonResponse()),
                 ],
             ],
         ]);
@@ -152,16 +142,17 @@ final class MessageRedaktorTest extends TestCase
         self::assertSame($revisedJsonResponse, $response);
     }
 
-    private function createMessageRevisionProphecy(
+    private static function createMessageRevisionDefinition(
         Request $revisedRequest = null,
         $revisedResponse = null
-    ): ObjectProphecy {
-        $revision = $this->prophesize(MessageRevision::class);
-        $revision->isApplicable(Argument::any())->willReturn(true);
-        $revision->applyToRequest(Argument::any())->willReturn($revisedRequest ?? new Request());
-        $revision->applyToResponse(Argument::cetera())->willReturn($revisedResponse ?? new Response());
-
-        return $revision;
+    ): \Closure {
+        return static function () use ($revisedRequest, $revisedResponse): MessageRevision {
+            return new MessageRevisionStub(
+                $revisedRequest ?? new Request(),
+                $revisedResponse ?? new Response(),
+                true
+            );
+        };
     }
 
     private static function createDummyMiddlewareClosure(): \Closure

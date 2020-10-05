@@ -8,6 +8,7 @@ use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithRouting;
+use DSLabs\LaravelRedaktor\Tests\Doubles\ResponseRevisionStub;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\ResponseRevision;
 use Illuminate\Http\Response;
@@ -54,7 +55,7 @@ final class ReviseResponseTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createResponseRevision($revisedResponse = new Response),
+                    self::createResponseRevisionDefinition($revisedResponse = new Response),
                 ],
             ]
         );
@@ -79,7 +80,7 @@ final class ReviseResponseTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createResponseRevision($revisedResponse = new Response),
+                    self::createResponseRevisionDefinition($revisedResponse = new Response),
                 ],
             ]
         );
@@ -102,29 +103,10 @@ final class ReviseResponseTest extends TestCase
         self::assertSame($originalResponse, $response);
     }
 
-    private static function createResponseRevision(Response $response): \Closure
+    private static function createResponseRevisionDefinition(Response $revisedResponse): \Closure
     {
-        return static function () use ($response): ResponseRevision {
-
-            return new class($response) implements ResponseRevision {
-
-                private $response;
-
-                public function __construct(Response $response)
-                {
-                    $this->response = $response;
-                }
-
-                public function isApplicable(object $request): bool
-                {
-                    return true;
-                }
-
-                public function applyToResponse(object $response, object $request): object
-                {
-                    return $this->response;
-                }
-            };
+        return static function () use ($revisedResponse): ResponseRevision {
+            return new ResponseRevisionStub($revisedResponse);
         };
     }
 }
