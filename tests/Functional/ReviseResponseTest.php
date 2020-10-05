@@ -120,7 +120,7 @@ final class ReviseResponseTest extends TestCase
                     return true;
                 }
 
-                public function applyToResponse(object $response): object
+                public function applyToResponse(object $response, object $request): object
                 {
                     return $this->response;
                 }

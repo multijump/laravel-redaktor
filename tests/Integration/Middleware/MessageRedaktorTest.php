@@ -102,7 +102,10 @@ final class MessageRedaktorTest extends TestCase
     public function testApplyToResponseIsCalledWithTheOriginalResponse(): void
     {
         // Arrange
-        $revisionProphecy = $this->createMessageRevisionProphecy(null, $revisedResponse = new Response());
+        $revisionProphecy = $this->createMessageRevisionProphecy(
+            $revisedRequest = new Request(),
+            $revisedResponse = new Response()
+        );
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
@@ -126,7 +129,7 @@ final class MessageRedaktorTest extends TestCase
         );
 
         // Assert
-        $revisionProphecy->applyToResponse($originalResponse)->shouldHaveBeenCalled();
+        $revisionProphecy->applyToResponse($originalResponse, $revisedRequest)->shouldHaveBeenCalled();
         self::assertSame($revisedResponse, $response);
     }
 
@@ -165,7 +168,7 @@ final class MessageRedaktorTest extends TestCase
         $revision = $this->prophesize(MessageRevision::class);
         $revision->isApplicable(Argument::any())->willReturn(true);
         $revision->applyToRequest(Argument::any())->willReturn($revisedRequest ?? new Request());
-        $revision->applyToResponse(Argument::any())->willReturn($revisedResponse ?? new Response());
+        $revision->applyToResponse(Argument::cetera())->willReturn($revisedResponse ?? new Response());
 
         return $revision;
     }
