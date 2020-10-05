@@ -35,7 +35,15 @@ final class ReviseRoutesTest extends TestCase
     {
         // Arrange
         $revisedRoutes = tap(new RouteCollection(), static function (RouteCollection $routes) {
-            $routes->add(new Route('GET', '/foo', static function () { return new Response(); }));
+            $routes->add(
+                new Route(
+                    'GET',
+                    '/foo',
+                    static function (): Response {
+                        return new Response();
+                    }
+                )
+            );
         });
         $this->withConfig(
             'redaktor.revisions',

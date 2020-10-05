@@ -48,7 +48,7 @@ final class ReviseRequestTest extends TestCase
         );
     }
 
-    public function testRevisedRequestIsPassedInToTheController(): void
+    public function testRevisedRequestIsInjectedInTheController(): void
     {
         // Arrange
         $this->withoutExceptionHandling();
@@ -76,7 +76,7 @@ final class ReviseRequestTest extends TestCase
         );
     }
 
-    public function testOriginalRequestIsPassedInToTheControllerIfNoVersionIsSpecified(): void
+    public function testOriginalRequestIsInjectedInTheControllerIfNoVersionIsSpecified(): void
     {
         // Arrange
         $this->withoutExceptionHandling();

@@ -10,10 +10,8 @@ use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\MessageRevision;
-use DSLabs\Redaktor\Revision\RoutingRevision;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Routing\RouteCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -99,13 +97,10 @@ final class MessageRedaktorTest extends TestCase
         );
     }
 
-    public function testApplyToResponseIsCalledWithTheOriginalResponse(): void
+    public function testRevisesResponseReturnedByNextClosure(): void
     {
         // Arrange
-        $revisionProphecy = $this->createMessageRevisionProphecy(
-            $revisedRequest = new Request(),
-            $revisedResponse = new Response()
-        );
+        $revisionProphecy = $this->createMessageRevisionProphecy(null, $revisedResponse = new Response());
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
@@ -120,16 +115,12 @@ final class MessageRedaktorTest extends TestCase
         $middleware = $this->app->make(MessageRedaktor::class);
 
         // Act
-        $originalResponse = new Response();
         $response = $middleware->handle(
             Request::forVersion('foo'),
-            static function () use ($originalResponse): Response {
-                return $originalResponse;
-            }
+            self::createDummyMiddlewareClosure()
         );
 
         // Assert
-        $revisionProphecy->applyToResponse($originalResponse, $revisedRequest)->shouldHaveBeenCalled();
         self::assertSame($revisedResponse, $response);
     }
 
