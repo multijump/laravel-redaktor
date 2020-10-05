@@ -33,7 +33,7 @@ final class ReviseResponseTest extends TestCase
         $this->addRoute(
             '/foo',
             'GET',
-            static function () use ($originalResponse) {
+            static function () use ($originalResponse): object {
                 return $originalResponse;
             }
         );
@@ -88,7 +88,7 @@ final class ReviseResponseTest extends TestCase
         $this->addRoute(
             '/foo',
             'GET',
-            static function () use ($originalResponse) {
+            static function () use ($originalResponse): object {
                 return $originalResponse;
             }
         );

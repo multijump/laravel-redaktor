@@ -36,7 +36,7 @@ final class ReviseRequestTest extends TestCase
         $this->addRoute(
             '/foo',
             'GET',
-            static function (IlluminateRequest $request) use ($originalRequest) {
+            static function (IlluminateRequest $request) use ($originalRequest): void {
                 // Assert
                 self::assertSame($originalRequest, $request);
             }
@@ -64,7 +64,7 @@ final class ReviseRequestTest extends TestCase
         $this->addRoute(
             '/foo',
             'GET',
-            static function (IlluminateRequest $request) use ($revisedRequest) {
+            static function (IlluminateRequest $request) use ($revisedRequest): void {
                 // Assert
                 self::assertSame($revisedRequest, $request);
             }
@@ -93,7 +93,7 @@ final class ReviseRequestTest extends TestCase
         $this->addRoute(
             '/foo',
             'GET',
-            static function (IlluminateRequest $request) use ($originalRequest) {
+            static function (IlluminateRequest $request) use ($originalRequest): void {
                 // Assert
                 self::assertSame($originalRequest, $request);
             }

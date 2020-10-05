@@ -77,7 +77,7 @@ final class MessageRedaktorTest extends TestCase
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
-                    static function () use ($revisionProphecy) {
+                    static function () use ($revisionProphecy): object {
                         return $revisionProphecy->reveal();
                     }
                 ],
@@ -106,7 +106,7 @@ final class MessageRedaktorTest extends TestCase
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
-                    static function () use ($revisionProphecy) {
+                    static function () use ($revisionProphecy): object {
                         return $revisionProphecy->reveal();
                     }
                 ],
@@ -138,7 +138,7 @@ final class MessageRedaktorTest extends TestCase
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
-                    static function () use ($revisionProphecy) {
+                    static function () use ($revisionProphecy): object {
                         return $revisionProphecy->reveal();
                     }
                 ],
