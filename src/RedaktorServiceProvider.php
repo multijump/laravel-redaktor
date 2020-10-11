@@ -11,7 +11,9 @@ use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Department\EditorDepartment;
 use DSLabs\Redaktor\Department\EditorProvider;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
+use DSLabs\Redaktor\Registry\PSR11RevisionResolver;
 use DSLabs\Redaktor\Registry\Registry;
+use DSLabs\Redaktor\Registry\RevisionResolver;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Http\Kernel;
@@ -81,6 +83,8 @@ final class RedaktorServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(InMemoryRegistry::class, Registry::class);
+
+        $this->app->singleton(RevisionResolver::class, PSR11RevisionResolver::class);
     }
 
     private function setupChiefEditor(): void

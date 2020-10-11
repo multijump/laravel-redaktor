@@ -11,8 +11,10 @@ use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithRouting;
 use DSLabs\LaravelRedaktor\Tests\Doubles\RequestRevisionStub;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\RequestRevision;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithExceptionHandling;
 use Illuminate\Http\Request as IlluminateRequest;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\TestCase;
 
 final class ReviseRequestTest extends TestCase
@@ -103,6 +105,43 @@ final class ReviseRequestTest extends TestCase
         // Act
         $this->getKernel()->handle(
             $originalRequest
+        );
+    }
+
+    public function testResolveRevisionsOutOfTheContainer(): void
+    {
+        // Arrange
+        $this->withoutExceptionHandling();
+        $this->withConfig(
+            'redaktor.revisions',
+            [
+                '2020-01' => [
+                    $revisionName = 'foo-revision',
+                ],
+            ]
+        );
+
+        $this->app->bind(
+            $revisionName,
+            function (Application $app): RequestRevision {
+                // Assert
+                self::assertTrue(true);
+
+                return $this->createStub(RequestRevision::class);
+            }
+        );
+
+        $this->addRoute(
+            '/bar',
+            'GET',
+            static function () {
+                return new Response();
+            }
+        );
+
+        // Act
+        $this->getKernel()->handle(
+            $request = Request::createForVersion('2020-01', '/bar')
         );
     }
 
