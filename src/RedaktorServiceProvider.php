@@ -21,6 +21,8 @@ use Illuminate\Support\ServiceProvider;
 
 final class RedaktorServiceProvider extends ServiceProvider
 {
+    private const SOURCE_CONFIG_PATH = __DIR__ . '/../config/redaktor.php';
+
     public function register(): void
     {
         $this->setupConfiguration();
@@ -40,10 +42,10 @@ final class RedaktorServiceProvider extends ServiceProvider
 
     private function setupConfiguration(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/config/redaktor.php', 'redaktor');
+        $this->mergeConfigFrom(self::SOURCE_CONFIG_PATH, 'redaktor');
 
         $this->publishes([
-            __DIR__ . '/config/redaktor.php' => $this->app->configPath('redaktor.php'),
+            self::SOURCE_CONFIG_PATH => $this->app->configPath('redaktor.php'),
         ]);
     }
 

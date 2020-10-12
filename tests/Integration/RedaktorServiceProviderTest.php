@@ -143,7 +143,7 @@ final class RedaktorServiceProviderTest extends TestCase
         ]);
 
         // Assert
-        self::assertFileEquals(__DIR__ . '/../../src/config/redaktor.php', $publishedConfigFilePath);
+        self::assertFileEquals(__DIR__ . '/../../config/redaktor.php', $publishedConfigFilePath);
         @unlink($publishedConfigFilePath);
     }
 
