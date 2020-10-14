@@ -18,6 +18,11 @@ trait InteractsWithRouting
      */
     abstract protected function getApplication(): Application;
 
+    protected function getRouter(): Router
+    {
+        return $this->getApplication()->get('router');
+    }
+
     /**
      * @param string $uri
      * @param array|string $methods
