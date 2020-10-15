@@ -148,6 +148,65 @@ final class RouteTaggingTest extends TestCase
         self::assertContains($bazRoute, $taggedRoutes->getRoutes());
     }
 
+    public function testTagRoutesGroup(): void
+    {
+        // Arrange
+        $router = $this->getRouter();
+
+        // Act
+        $barRoute = $bazRoute = null;
+        $fooRoute = $router->addRoute('GET', '/foo', static function () { });
+        $router->group(
+            [
+                'tags' => ['barbaz'],
+            ],
+            static function (Router $router) use (&$barRoute, &$bazRoute): void {
+                $barRoute = $router->addRoute('POST', '/bar', static function () { });
+                $bazRoute = $router->addRoute('PUT', '/baz', static function () { });
+            }
+        );
+
+        // Assert
+        self::assertCount(2, $barbazRoutes = $router->getByTag('barbaz'));
+        self::assertNotContains($fooRoute, $barbazRoutes);
+        self::assertContains($barRoute, $barbazRoutes);
+        self::assertContains($bazRoute, $barbazRoutes);
+    }
+
+    public function testTagSubGroups(): void
+    {
+        // Arrange
+        $router = $this->getRouter();
+
+        // Act
+        $fooRoute = $barRoute = null;
+        $router->group(
+            [
+                'tags' => ['foobar'],
+            ],
+            static function (Router $router) use (&$fooRoute, &$barRoute): void {
+                $fooRoute = $router->addRoute('GET', '/foo', static function () { });
+
+                $router->group(
+                    [
+                        'tags' => ['bar']
+                    ],
+                    static function (Router $router) use (&$barRoute): void {
+                        $barRoute = $router->addRoute('POST', '/bar', static function () { });
+                    }
+                );
+            }
+        );
+
+        // Assert
+        self::assertCount(2, $fooBarRoutes = $router->getByTag('foobar'));
+        self::assertContains($fooRoute, $fooBarRoutes);
+        self::assertContains($barRoute, $fooBarRoutes);
+        self::assertCount(1, $barRoutes = $router->getByTag('bar'));
+        self::assertNotContains($fooRoute, $barRoutes);
+        self::assertContains($barRoute, $barRoutes);
+    }
+
     public function provideInvalidTag(): array
     {
         return [

@@ -173,7 +173,16 @@ final class RedaktorServiceProvider extends ServiceProvider
                     $this->tags = [];
                 }
 
-                return in_array($tag, $this->tags, true);
+                if (in_array($tag, $this->tags, true)) {
+                    return true;
+                }
+
+                // Group tags.
+                if (!$tags = $this->getAction('tags')) {
+                    return false;
+                }
+
+                return in_array($tag,  $tags, true);
             }
         );
 
