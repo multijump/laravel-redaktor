@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Version;
 
+use DSLabs\Redaktor\Version\Version;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Http\Request;
 
@@ -19,12 +20,14 @@ final class QueryStringResolver implements VersionResolver
         $this->name = $name;
     }
 
-    public function resolve($request): ?string
+    public function resolve($request): Version
     {
         if (!$request instanceof Request) {
             throw InvalidRequestException::make($request);
         }
 
-        return $request->query($this->name, null);
+        return new Version(
+            $request->query($this->name, '')
+        );
     }
 }

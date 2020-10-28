@@ -17,10 +17,10 @@ final class QueryStringResolverTest extends TestCase
     public function testRetrievesNullIfParameterIsNotDefined(): void
     {
         // Act
-        $revision = (new QueryStringResolver('foo'))->resolve(new Request());
+        $version = (new QueryStringResolver('foo'))->resolve(new Request());
 
         //Assert
-        self::assertNull($revision);
+        self::assertSame('', (string)$version);
     }
 
     public function testRetrievesRevisionName(): void
@@ -29,10 +29,10 @@ final class QueryStringResolverTest extends TestCase
         $request = new Request(['foo' => 'bar']);
 
         // Act
-        $revision = (new QueryStringResolver('foo'))->resolve($request);
+        $version = (new QueryStringResolver('foo'))->resolve($request);
 
         // Assert
-        self::assertSame('bar', $revision);
+        self::assertSame('bar', (string)$version);
     }
 
     public function testThrowsAnInvalidateArgumentExceptionIfArgumentIsNotAnIlluminateRequest(): void

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Department;
 
-use DSLabs\LaravelRedaktor\Guard\IlluminateGuard;
 use DSLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\Department\EditorProvider;
 use DSLabs\Redaktor\Editor\Brief;
@@ -29,8 +28,6 @@ final class IlluminateDepartment implements EditorProvider
      */
     public function provideEditor(Brief $brief): EditorInterface
     {
-        IlluminateGuard::assertRequest($brief->request());
-
         return new IlluminateEditor(
             $this->editorProvider->provideEditor($brief)
         );

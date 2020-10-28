@@ -9,7 +9,7 @@ use DSLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\Department\EditorDepartment;
 use DSLabs\Redaktor\Editor\Brief;
 use DSLabs\Redaktor\Revision\Revision;
-use Illuminate\Http\Request;
+use DSLabs\Redaktor\Version\Version;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,7 +22,7 @@ final class IlluminateDepartmentTest extends TestCase
         // Arrange
         $illuminateDepartment = self::createIlluminateDepartment();
         $brief = new Brief(
-            $request = new Request(),
+            $version = new Version('foo'),
             $revisions = [
                 self::createDummyRevision(),
             ]
@@ -33,24 +33,8 @@ final class IlluminateDepartmentTest extends TestCase
 
         // Assert
         self::assertInstanceOf(IlluminateEditor::class, $editor);
-        self::assertSame($request, $editor->retrieveBriefedRequest());
-        self::assertSame($revisions, $editor->retrieveBriefedRevisions());
-    }
-
-    public function testRefuseToProvideAnEditorIfBriefDoesNotContainAnIlluminateRequest(): void
-    {
-        // Arrange
-        $illuminateDepartment = self::createIlluminateDepartment();
-        $brief = new Brief(
-            new \stdClass(),
-            []
-        );
-
-        // Assert
-        $this->expectException(\InvalidArgumentException::class);
-
-        // Act
-        $illuminateDepartment->provideEditor($brief);
+        self::assertSame($version, $editor->briefedVersion());
+        self::assertSame($revisions, $editor->briefedRevisions());
     }
 
     private static function createIlluminateDepartment(): IlluminateDepartment

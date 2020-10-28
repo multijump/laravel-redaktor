@@ -7,6 +7,7 @@ namespace DSLabs\LaravelRedaktor;
 use DSLabs\LaravelRedaktor\Guard\IlluminateGuard;
 use DSLabs\Redaktor\Editor\EditorInterface;
 use DSLabs\Redaktor\Revision\Revision;
+use DSLabs\Redaktor\Version\Version;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;
@@ -25,12 +26,10 @@ final class IlluminateEditor implements EditorInterface
 
     /**
      * @inheritDoc
-     *
-     * @return Request
      */
-    public function retrieveBriefedRequest(): object
+    public function briefedVersion(): Version
     {
-        return $this->editor->retrieveBriefedRequest();
+        return $this->editor->briefedVersion();
     }
 
     /**
@@ -38,9 +37,9 @@ final class IlluminateEditor implements EditorInterface
      *
      * @return Revision[]
      */
-    public function retrieveBriefedRevisions(): array
+    public function briefedRevisions(): array
     {
-        return $this->editor->retrieveBriefedRevisions();
+        return $this->editor->briefedRevisions();
     }
 
     /**
@@ -64,11 +63,13 @@ final class IlluminateEditor implements EditorInterface
     /**
      * @inheritDoc
      *
-     * @return Response
+     * @return Request
      */
-    public function reviseRequest(): object
+    public function reviseRequest(object $request): object
     {
-        $revisedRequest = $this->editor->reviseRequest();
+        IlluminateGuard::assertRequest($request);
+
+        $revisedRequest = $this->editor->reviseRequest($request);
 
         IlluminateGuard::assertRequest($revisedRequest);
 

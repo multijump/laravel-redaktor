@@ -17,10 +17,10 @@ final class HeaderResolverTest extends TestCase
     public function testRetrievesNullIfHeaderIsNotDefined(): void
     {
         // Act
-        $revision = (new HeaderResolver('Foo'))->resolve(new Request());
+        $version = (new HeaderResolver('Foo'))->resolve(new Request());
 
         //Assert
-        self::assertNull($revision);
+        self::assertSame('', (string)$version);
     }
 
     public function testRetrievesRevisionName(): void
@@ -30,10 +30,10 @@ final class HeaderResolverTest extends TestCase
         $request->headers->set('Foo', 'bar');
 
         // Act
-        $revision = (new HeaderResolver('Foo'))->resolve($request);
+        $version = (new HeaderResolver('Foo'))->resolve($request);
 
         // Assert
-        self::assertSame('bar', $revision);
+        self::assertSame('bar', (string)$version);
     }
 
     public function testThrowsAnInvalidateArgumentExceptionIfArgumentIsNotAnIlluminateRequest(): void

@@ -102,10 +102,10 @@ final class RedaktorServiceProviderTest extends TestCase
         $request->headers->set('API-Version', 'foo');
 
         // Act
-        $revisionName = $this->app->get(VersionResolver::class)->resolve($request);
+        $version = $this->app->get(VersionResolver::class)->resolve($request);
 
         // Assert
-        self::assertSame('foo', $revisionName);
+        self::assertSame('foo', (string)$version);
     }
 
     public function testRetrievesRevisionNameUsingConfiguredResolver(): void
@@ -125,10 +125,10 @@ final class RedaktorServiceProviderTest extends TestCase
         ]);
 
         // Act
-        $revisionName = $this->app->get(VersionResolver::class)->resolve($request);
+        $version = $this->app->get(VersionResolver::class)->resolve($request);
 
         // Assert
-        self::assertSame('bar', $revisionName);
+        self::assertSame('bar', (string)$version);
     }
 
     public function testPublishesConfig(): void

@@ -7,6 +7,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Unit;
 use DSLabs\LaravelRedaktor\IlluminateEditor;
 use DSLabs\Redaktor\Editor\EditorInterface;
 use DSLabs\Redaktor\Revision\Revision;
+use DSLabs\Redaktor\Version\Version;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\RouteCollection;
@@ -22,27 +23,27 @@ use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
  */
 final class IlluminateEditorTest extends TestCase
 {
-    public function testRetrievesTheBriefedRequest(): void
+    public function testRetrievesTheBriefedVersion(): void
     {
         // Arrange
         $juniorEditor = $this->prophesize(EditorInterface::class);
-        $juniorEditor->retrieveBriefedRequest()
-            ->willReturn($originalRequest = new Request());
+        $juniorEditor->briefedVersion()
+            ->willReturn($expectedBriefedVersion = new Version('foo'));
 
         $illuminateEditor = new IlluminateEditor($juniorEditor->reveal());
 
         // Act
-        $briefedRequest = $illuminateEditor->retrieveBriefedRequest();
+        $actualBriefedVersion = $illuminateEditor->briefedVersion();
 
         // Assert
-        self::assertSame($originalRequest, $briefedRequest);
+        self::assertSame($expectedBriefedVersion, $actualBriefedVersion);
     }
 
     public function testRetrievesTheBriefedRevisions(): void
     {
         // Arrange
         $juniorEditor = $this->prophesize(EditorInterface::class);
-        $juniorEditor->retrieveBriefedRevisions()
+        $juniorEditor->briefedRevisions()
             ->willReturn($revisions = [
                 $this->prophesize(Revision::class)->reveal(),
             ]);
@@ -50,7 +51,7 @@ final class IlluminateEditorTest extends TestCase
         $illuminateEditor = new IlluminateEditor($juniorEditor->reveal());
 
         // Act
-        $briefedRevisions = $illuminateEditor->retrieveBriefedRevisions();
+        $briefedRevisions = $illuminateEditor->briefedRevisions();
 
         // Assert
         self::assertSame($revisions, $briefedRevisions);
@@ -129,7 +130,7 @@ final class IlluminateEditorTest extends TestCase
     {
         // Arrange
         $juniorEditor = $this->prophesize(EditorInterface::class);
-        $juniorEditor->reviseRequest()
+        $juniorEditor->reviseRequest(Argument::any())
             ->willReturn(new SymfonyRequest());
 
         $editor = new IlluminateEditor(
@@ -140,14 +141,30 @@ final class IlluminateEditorTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         // Act
-        $editor->reviseRequest();
+        $editor->reviseRequest(new Request());
+    }
+
+    public function testRefuseARequestInstanceOtherThanAnIlluminateOne(): void
+    {
+        // Arrange
+        $juniorEditor = $this->prophesize(EditorInterface::class);
+
+        $editor = new IlluminateEditor(
+            $juniorEditor->reveal()
+        );
+
+        // Assert
+        $this->expectException(InvalidArgumentException::class);
+
+        // Act
+        $editor->reviseRequest(new SymfonyRequest());
     }
 
     public function testDelegateRevisingTheRequestToTheJuniorEditor(): void
     {
         // Arrange
         $juniorEditor = $this->prophesize(EditorInterface::class);
-        $juniorEditor->reviseRequest()
+        $juniorEditor->reviseRequest(Argument::any())
             ->willReturn(new Request());
 
         $editor = new IlluminateEditor(
@@ -155,10 +172,10 @@ final class IlluminateEditorTest extends TestCase
         );
 
         // Act
-        $editor->reviseRequest();
+        $editor->reviseRequest($originalRequest = new Request());
 
         // Assert
-        $juniorEditor->reviseRequest()
+        $juniorEditor->reviseRequest($originalRequest)
             ->shouldHaveBeenCalled();
     }
 
@@ -166,7 +183,7 @@ final class IlluminateEditorTest extends TestCase
     {
         // Arrange
         $juniorEditor = $this->prophesize(EditorInterface::class);
-        $juniorEditor->reviseRequest()
+        $juniorEditor->reviseRequest(Argument::any())
             ->willReturn($juniorRevisedRequest = new Request());
 
         $editor = new IlluminateEditor(
@@ -174,7 +191,7 @@ final class IlluminateEditorTest extends TestCase
         );
 
         // Act
-        $revisedRequest = $editor->reviseRequest();
+        $revisedRequest = $editor->reviseRequest(new Request());
 
         // Assert
         self::assertSame($juniorRevisedRequest, $revisedRequest);
