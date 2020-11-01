@@ -8,8 +8,8 @@ use DSLabs\LaravelRedaktor\Middleware\MessageRedaktor;
 use DSLabs\LaravelRedaktor\Middleware\RoutingRedaktor;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
-use DSLabs\Redaktor\Department\EditorDepartment;
-use DSLabs\Redaktor\Department\EditorProvider;
+use DSLabs\Redaktor\Department\MessageDepartment;
+use DSLabs\Redaktor\Department\RoutingDepartment;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\PSR11RevisionResolver;
 use DSLabs\Redaktor\Registry\Registry;
@@ -32,7 +32,7 @@ final class RedaktorServiceProvider extends ServiceProvider
         $this->setupConfiguration();
         $this->setupVersionResolver();
         $this->setupRevisionsRegistry();
-        $this->setupEditorProvider();
+        $this->setupEditorProviders();
         $this->setupChiefEditor();
     }
 
@@ -73,9 +73,10 @@ final class RedaktorServiceProvider extends ServiceProvider
         );
     }
 
-    private function setupEditorProvider(): void
+    private function setupEditorProviders(): void
     {
-        $this->app->singleton(EditorProvider::class, EditorDepartment::class);
+        $this->app->singleton(MessageDepartment::class);
+        $this->app->singleton(RoutingDepartment::class);
     }
 
     private function setupRevisionsRegistry(): void

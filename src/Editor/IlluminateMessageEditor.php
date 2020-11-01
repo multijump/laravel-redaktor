@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace DSLabs\LaravelRedaktor;
+namespace DSLabs\LaravelRedaktor\Editor;
 
 use DSLabs\LaravelRedaktor\Guard\IlluminateGuard;
 use DSLabs\Redaktor\Editor\EditorInterface;
+use DSLabs\Redaktor\Editor\MessageEditorInterface;
 use DSLabs\Redaktor\Revision\Revision;
 use DSLabs\Redaktor\Version\Version;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\RouteCollection;
 
-final class IlluminateEditor implements EditorInterface
+final class IlluminateMessageEditor implements MessageEditorInterface
 {
     /**
      * @var EditorInterface
      */
-    private $editor;
+    private $juniorMessageEditor;
 
-    public function __construct(EditorInterface $editor)
+    public function __construct(MessageEditorInterface $juniorMessageEditor)
     {
-        $this->editor = $editor;
+        $this->juniorMessageEditor = $juniorMessageEditor;
     }
 
     /**
@@ -29,7 +29,7 @@ final class IlluminateEditor implements EditorInterface
      */
     public function briefedVersion(): Version
     {
-        return $this->editor->briefedVersion();
+        return $this->juniorMessageEditor->briefedVersion();
     }
 
     /**
@@ -39,25 +39,7 @@ final class IlluminateEditor implements EditorInterface
      */
     public function briefedRevisions(): array
     {
-        return $this->editor->briefedRevisions();
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @param RouteCollection $routes
-     *
-     * @return RouteCollection
-     */
-    public function reviseRouting(iterable $routes): iterable
-    {
-        IlluminateGuard::assertRouteCollection($routes);
-
-        $revisedRoutes = $this->editor->reviseRouting($routes);
-
-        IlluminateGuard::assertRouteCollection($revisedRoutes);
-
-        return $revisedRoutes;
+        return $this->juniorMessageEditor->briefedRevisions();
     }
 
     /**
@@ -69,7 +51,7 @@ final class IlluminateEditor implements EditorInterface
     {
         IlluminateGuard::assertRequest($request);
 
-        $revisedRequest = $this->editor->reviseRequest($request);
+        $revisedRequest = $this->juniorMessageEditor->reviseRequest($request);
 
         IlluminateGuard::assertRequest($revisedRequest);
 
@@ -87,7 +69,7 @@ final class IlluminateEditor implements EditorInterface
     {
         IlluminateGuard::assertResponse($response);
 
-        $revisedResponse = $this->editor->reviseResponse($response);
+        $revisedResponse = $this->juniorMessageEditor->reviseResponse($response);
 
         IlluminateGuard::assertResponse($revisedResponse);
 

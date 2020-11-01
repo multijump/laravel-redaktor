@@ -6,6 +6,7 @@ namespace DSLabs\LaravelRedaktor\Middleware;
 
 use Closure;
 use DSLabs\Redaktor\ChiefEditorInterface;
+use DSLabs\Redaktor\Department\RoutingDepartment;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,11 @@ final class RoutingRedaktor
     private $chiefEditor;
 
     /**
+     * @var RoutingDepartment
+     */
+    private $routingDepartment;
+
+    /**
      * @var Router
      */
     private $router;
@@ -33,10 +39,12 @@ final class RoutingRedaktor
     public function __construct(
         VersionResolver $versionResolver,
         ChiefEditorInterface $chiefEditor,
+        RoutingDepartment $routingDepartment,
         Router $router
     ) {
         $this->versionResolver = $versionResolver;
         $this->chiefEditor = $chiefEditor;
+        $this->routingDepartment = $routingDepartment;
         $this->router = $router;
     }
 
@@ -52,6 +60,7 @@ final class RoutingRedaktor
 
         /** @var RouteCollection $routes */
         $routes = $this->chiefEditor
+            ->speakTo($this->routingDepartment)
             ->appointEditor($version)
             ->reviseRouting(
                 $originalRoutes = $this->router->getRoutes()

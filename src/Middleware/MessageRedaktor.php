@@ -6,7 +6,7 @@ namespace DSLabs\LaravelRedaktor\Middleware;
 
 use Closure;
 use DSLabs\Redaktor\ChiefEditorInterface;
-use DSLabs\Redaktor\Department\EditorDepartment;
+use DSLabs\Redaktor\Department\MessageDepartment;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\JsonResponse;
@@ -26,9 +26,9 @@ final class MessageRedaktor
     private $chiefEditor;
 
     /**
-     * @var EditorDepartment
+     * @var MessageDepartment
      */
-    private $editorDepartment;
+    private $messageDepartment;
 
     /**
      * @var Container
@@ -38,12 +38,12 @@ final class MessageRedaktor
     public function __construct(
         VersionResolver $versionResolver,
         ChiefEditorInterface $chiefEditor,
-        EditorDepartment $editorDepartment,
+        MessageDepartment $messageDepartment,
         Container $container
     ) {
         $this->versionResolver = $versionResolver;
         $this->chiefEditor = $chiefEditor;
-        $this->editorDepartment = $editorDepartment;
+        $this->messageDepartment = $messageDepartment;
         $this->container = $container;
     }
 
@@ -58,7 +58,7 @@ final class MessageRedaktor
         $version = $this->versionResolver->resolve($request);
 
         $editor = $this->chiefEditor
-            ->speakTo($this->editorDepartment)
+            ->speakTo($this->messageDepartment)
             ->appointEditor($version);
 
         $response = $next(

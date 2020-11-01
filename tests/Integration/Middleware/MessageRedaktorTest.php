@@ -120,7 +120,6 @@ final class MessageRedaktorTest extends TestCase
     public function testSupportsJsonResponse(): void
     {
         // Arrange
-
         $this->withConfig([
             'redaktor.revisions' => [
                 'foo' => [
