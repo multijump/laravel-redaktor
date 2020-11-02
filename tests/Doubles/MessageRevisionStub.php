@@ -43,7 +43,7 @@ final class MessageRevisionStub implements MessageRevision
         return $this->revisedRequest;
     }
 
-    public function applyToResponse(object $response, object $request): object
+    public function applyToResponse(object $request, object $response): object
     {
         return $this->revisedResponse;
     }

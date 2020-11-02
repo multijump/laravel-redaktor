@@ -31,7 +31,7 @@ final class ResponseRevisionStub implements ResponseRevision
         return $this->isApplicable;
     }
 
-    public function applyToResponse(object $response, object $request): object
+    public function applyToResponse(object $request, object $response): object
     {
         return $this->revisedResponse;
     }
