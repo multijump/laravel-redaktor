@@ -29,7 +29,6 @@ final class RedaktorServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->setupConfiguration();
         $this->setupVersionResolver();
         $this->setupRevisionsRegistry();
         $this->setupEditorProviders();
@@ -38,6 +37,7 @@ final class RedaktorServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->setupConfiguration();
         $this->setupMiddlewares();
         self::setupRouteMacros();
     }
