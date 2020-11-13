@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Tests\Unit\Version;
 
-use DSLabs\LaravelRedaktor\Version\HeaderResolver;
+use DSLabs\LaravelRedaktor\Version\CustomHeaderResolver;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 /**
- * @see HeaderResolver
+ * @see CustomHeaderResolver
  */
-final class HeaderResolverTest extends TestCase
+final class CustomHeaderResolverTest extends TestCase
 {
     public function testRetrievesNullIfHeaderIsNotDefined(): void
     {
         // Act
-        $version = (new HeaderResolver('Foo'))->resolve(new Request());
+        $version = (new CustomHeaderResolver('Foo'))->resolve(new Request());
 
         //Assert
         self::assertSame('', (string)$version);
@@ -30,7 +30,7 @@ final class HeaderResolverTest extends TestCase
         $request->headers->set('Foo', 'bar');
 
         // Act
-        $version = (new HeaderResolver('Foo'))->resolve($request);
+        $version = (new CustomHeaderResolver('Foo'))->resolve($request);
 
         // Assert
         self::assertSame('bar', (string)$version);
@@ -42,7 +42,7 @@ final class HeaderResolverTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         // Act
-        (new HeaderResolver('Foo'))->resolve(
+        (new CustomHeaderResolver('Foo'))->resolve(
             new SymfonyRequest()
         );
     }

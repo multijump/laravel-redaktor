@@ -7,7 +7,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Integration;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
-use DSLabs\LaravelRedaktor\Version\HeaderResolver;
+use DSLabs\LaravelRedaktor\Version\CustomHeaderResolver;
 use DSLabs\LaravelRedaktor\Version\QueryStringResolver;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
@@ -48,13 +48,13 @@ final class RedaktorServiceProviderTest extends TestCase
         self::assertArrayHasKey('revisions', $redaktorConfig);
     }
 
-    public function testDefaultsToHeaderResolver(): void
+    public function testDefaultsToCustomHeaderResolver(): void
     {
         // Act
         $resolverConfig = $this->app->get('config')->get('redaktor.resolver');
 
         // Assert
-        self::assertSame(HeaderResolver::class, $resolverConfig['id']);
+        self::assertSame(CustomHeaderResolver::class, $resolverConfig['id']);
         self::assertSame(['name' => 'API-Version'], $resolverConfig['config']);
     }
 

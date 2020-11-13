@@ -8,7 +8,7 @@ return [
      * Configure the revision name resolver to be used.
      */
     'resolver' => [
-        'id' => \DSLabs\LaravelRedaktor\Version\HeaderResolver::class,
+        'id' => \DSLabs\LaravelRedaktor\Version\CustomHeaderResolver::class,
         'config' => [
             'name' => 'API-Version',
         ],

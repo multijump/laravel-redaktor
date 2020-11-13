@@ -8,7 +8,7 @@ use DSLabs\Redaktor\Version\Version;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Http\Request;
 
-final class HeaderResolver implements VersionResolver
+final class CustomHeaderResolver implements VersionResolver
 {
     /**
      * @var string
