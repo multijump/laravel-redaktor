@@ -20,7 +20,7 @@ final class QueryStringResolver implements VersionResolver
         $this->name = $name;
     }
 
-    public function resolve($request): Version
+    public function resolve(object $request): Version
     {
         if (!$request instanceof Request) {
             throw InvalidRequestException::make($request);
