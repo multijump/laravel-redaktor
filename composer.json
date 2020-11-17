@@ -1,9 +1,27 @@
 {
-    "name": "dslabs/laravel-redaktor",
-    "description": "Laravel wrapper for Redaktor.",
+    "name": "ds-labs/laravel-redaktor",
+    "description": "Evolve your API while maintaining backwards compatibility.",
+    "type": "library",
+    "keywords": [
+        "api",
+        "versioning",
+        "rest",
+        "evolution",
+        "revision",
+        "redaktor",
+        "laravel"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Saavedra",
+            "email": "davidsq89@gmail.com",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": "^7.2",
-        "dslabs/redaktor": "dev-master",
+        "ds-labs/redaktor": "dev-master",
         "illuminate/http": "^6|^7",
         "illuminate/support": "^6|^7",
         "illuminate/routing": "^6|^7"
