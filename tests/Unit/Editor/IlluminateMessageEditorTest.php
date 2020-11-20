@@ -25,45 +25,42 @@ final class IlluminateMessageEditorTest extends TestCase
     public function testRetrievesTheBriefedVersion(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(MessageEditorInterface::class);
+        $juniorEditor = $this->createMessageEditorProphecy();
         $juniorEditor->briefedVersion()
-            ->willReturn($expectedBriefedVersion = new Version('foo'));
-
+            ->willReturn($expectedVersion = new Version('foo'));
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Act
-        $actualBriefedVersion = $illuminateEditor->briefedVersion();
+        $briefedVersion = $illuminateEditor->briefedVersion();
 
         // Assert
-        self::assertSame($expectedBriefedVersion, $actualBriefedVersion);
+        self::assertSame($expectedVersion, $briefedVersion);
     }
 
     public function testRetrievesTheBriefedRevisions(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(MessageEditorInterface::class);
+        $juniorEditor = $this->createMessageEditorProphecy();
         $juniorEditor->briefedRevisions()
-            ->willReturn($revisions = [
+            ->willReturn($expectedRevisions = [
                 new class implements Revision {},
                 new class implements Revision {},
             ]);
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Act
         $briefedRevisions = $illuminateEditor->briefedRevisions();
 
         // Assert
-        self::assertSame($revisions, $briefedRevisions);
+        self::assertSame($expectedRevisions, $briefedRevisions);
     }
 
     public function testRefuseReturningARequestInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(MessageEditorInterface::class);
+        $juniorEditor = $this->createMessageEditorProphecy();
         $juniorEditor->reviseRequest(Argument::any())
             ->willReturn(new SymfonyRequest());
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Assert
@@ -76,8 +73,7 @@ final class IlluminateMessageEditorTest extends TestCase
     public function testRefuseARequestInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(MessageEditorInterface::class);
-
+        $juniorEditor = $this->createMessageEditorProphecy();
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Assert
@@ -90,10 +86,9 @@ final class IlluminateMessageEditorTest extends TestCase
     public function testDelegateRevisingTheRequestToTheJuniorEditor(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(MessageEditorInterface::class);
+        $juniorEditor = $this->createMessageEditorProphecy();
         $juniorEditor->reviseRequest(Argument::any())
             ->willReturn(new Request());
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Act
@@ -107,10 +102,9 @@ final class IlluminateMessageEditorTest extends TestCase
     public function testJuniorEditorReportsBackTheRevisedRequest(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(MessageEditorInterface::class);
+        $juniorEditor = $this->createMessageEditorProphecy();
         $juniorEditor->reviseRequest(Argument::any())
             ->willReturn($juniorRevisedRequest = new Request());
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Act
@@ -124,7 +118,6 @@ final class IlluminateMessageEditorTest extends TestCase
     {
         // Arrange
         $juniorEditor = $this->createMock(MessageEditorInterface::class);
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor);
 
         // Assert
@@ -140,7 +133,6 @@ final class IlluminateMessageEditorTest extends TestCase
         $juniorEditor = $this->prophesize(MessageEditorInterface::class);
         $juniorEditor->reviseResponse(Argument::any())
             ->willReturn(new SymfonyResponse());
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Assert
@@ -156,7 +148,6 @@ final class IlluminateMessageEditorTest extends TestCase
         $juniorEditor = $this->prophesize(MessageEditorInterface::class);
         $juniorEditor->reviseResponse(Argument::any())
             ->willReturn(new Response());
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Act
@@ -173,7 +164,6 @@ final class IlluminateMessageEditorTest extends TestCase
         $juniorEditor = $this->prophesize(MessageEditorInterface::class);
         $juniorEditor->reviseResponse(Argument::any())
             ->willReturn($juniorRevisedResponse = new Response());
-
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 
         // Act
@@ -181,5 +171,13 @@ final class IlluminateMessageEditorTest extends TestCase
 
         // Assert
         self::assertSame($juniorRevisedResponse, $revisedResponse);
+    }
+
+    /**
+     * @return MessageEditorInterface|ObjectProphecy
+     */
+    private function createMessageEditorProphecy(): ObjectProphecy
+    {
+        return $this->prophesize(MessageEditorInterface::class);
     }
 }

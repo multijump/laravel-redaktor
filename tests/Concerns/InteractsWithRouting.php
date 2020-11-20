@@ -33,16 +33,14 @@ trait InteractsWithRouting
      */
     protected function addRoute(string $uri, $methods = 'GET', $action = null, $middleware = 'api'): Route
     {
-        /** @var Router $router */
-        $router = $this->getApplication()->make('router');
-
-        $route = $router->addRoute(
-            $methods,
-            $uri,
-            $action ?? static function (): Response {
-                return new Response();
-            }
-        );
+        $route = $this->getRouter()
+            ->addRoute(
+                $methods,
+                $uri,
+                $action ?? static function (): Response {
+                    return new Response();
+                }
+            );
 
         $middleware && $route->middleware($middleware);
 

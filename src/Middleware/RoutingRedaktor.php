@@ -58,19 +58,19 @@ final class RoutingRedaktor
     {
         $version = $this->versionResolver->resolve($request);
 
-        /** @var RouteCollection $routes */
-        $routes = $this->chiefEditor
+        /** @var RouteCollection $revisedRoutes */
+        $revisedRoutes = $this->chiefEditor
             ->speakTo($this->routingDepartment)
             ->appointEditor($version)
             ->reviseRouting(
                 $originalRoutes = $this->router->getRoutes()
             );
 
-        $routes !== $originalRoutes && $this->router->setRoutes($routes);
+        $revisedRoutes !== $originalRoutes && $this->router->setRoutes($revisedRoutes);
 
         $response = $next($request);
 
-        $routes !== $originalRoutes && $this->router->setRoutes($originalRoutes);
+        $revisedRoutes !== $originalRoutes && $this->router->setRoutes($originalRoutes);
 
         return $response;
     }

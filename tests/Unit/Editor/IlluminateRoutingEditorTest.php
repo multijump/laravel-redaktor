@@ -16,47 +16,48 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
+/**
+ * @see IlluminateRoutingEditor
+ */
 final class IlluminateRoutingEditorTest extends TestCase
 {
     public function testRetrieveTheBriefedVersion(): void
     {
         // Arrange
-        /** @var RoutingEditorInterface|ObjectProphecy $juniorRoutingEditor */
-        $juniorRoutingEditor = $this->prophesize(RoutingEditorInterface::class);
-        $juniorRoutingEditor->briefedVersion()
+        $juniorEditor = $this->createRoutingEditorProphecy();
+        $juniorEditor->briefedVersion()
             ->willReturn($expectedVersion = new Version('foo'));
+        $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Act
-        $actualVersion = (new IlluminateRoutingEditor($juniorRoutingEditor->reveal()))->briefedVersion();
+        $briefedVersion = $illuminateEditor->briefedVersion();
 
         // Assert
-        self::assertSame($expectedVersion, $actualVersion);
+        self::assertSame($expectedVersion, $briefedVersion);
     }
 
     public function testRetrieveTheBriefedRevisions(): void
     {
         // Arrange
-        /** @var RoutingEditorInterface|ObjectProphecy $juniorRoutingEditor */
-        $juniorRoutingEditor = $this->prophesize(RoutingEditorInterface::class);
-        $juniorRoutingEditor->briefedRevisions()
+        $juniorEditor = $this->createRoutingEditorProphecy();
+        $juniorEditor->briefedRevisions()
             ->willReturn($expectedRevisions = [
                 new class implements Revision {},
                 new class implements Revision {},
             ]);
-
-        $illuminateEditor = new IlluminateRoutingEditor($juniorRoutingEditor->reveal());
+        $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Act
-        $actualRevisions = $illuminateEditor->briefedRevisions();
+        $briefedRevisions = $illuminateEditor->briefedRevisions();
 
         // Assert
-        self::assertSame($expectedRevisions, $actualRevisions);
+        self::assertSame($expectedRevisions, $briefedRevisions);
     }
 
     public function testRefuseARouteCollectionInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(RoutingEditorInterface::class);
+        $juniorEditor = $this->createRoutingEditorProphecy();
         $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Assert
@@ -69,7 +70,7 @@ final class IlluminateRoutingEditorTest extends TestCase
     public function testRefuseReturningARouteCollectionInstanceOtherThanAnIlluminateOne(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(RoutingEditorInterface::class);
+        $juniorEditor = $this->createRoutingEditorProphecy();
         $juniorEditor->reviseRouting(Argument::any())
             ->willReturn(new SymfonyRouteCollection());
         $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
@@ -84,10 +85,9 @@ final class IlluminateRoutingEditorTest extends TestCase
     public function testDelegateRevisingTheRoutesToTheJuniorEditor(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(RoutingEditorInterface::class);
+        $juniorEditor = $this->createRoutingEditorProphecy();
         $juniorEditor->reviseRouting(Argument::any())
             ->willReturn(new RouteCollection());
-
         $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Act
@@ -101,62 +101,66 @@ final class IlluminateRoutingEditorTest extends TestCase
     public function testJuniorEditorReportsBackTheRevisedRoutes(): void
     {
         // Arrange
-        $juniorEditor = $this->prophesize(RoutingEditorInterface::class);
+        $juniorEditor = $this->createRoutingEditorProphecy();
         $juniorEditor->reviseRouting(Argument::any())
-            ->willReturn($juniorRevisedRouteCollection = new RouteCollection());
-
+            ->willReturn($juniorRevisedRoutes = new RouteCollection());
         $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Act
-        $revisedRouteCollection = $illuminateEditor->reviseRouting(new RouteCollection());
+        $revisedRoutes = $illuminateEditor->reviseRouting(new RouteCollection());
 
         // Assert
-        self::assertSame($juniorRevisedRouteCollection, $revisedRouteCollection);
+        self::assertSame($juniorRevisedRoutes, $revisedRoutes);
     }
 
     public function testReviseIlluminateRoutes(): void
     {
         // Arrange
-        /** @var RoutingEditorInterface|ObjectProphecy $juniorRoutingEditor */
-        $juniorRoutingEditor = $this->prophesize(RoutingEditorInterface::class);
-        $juniorRoutingEditor->reviseRouting(Argument::type(IlluminateRouteCollection::class))
-            ->willReturn($expectedRoutes = new IlluminateRouteCollection());
+        $juniorEditor = $this->createRoutingEditorProphecy();
+        $juniorEditor->reviseRouting(Argument::type(IlluminateRouteCollection::class))
+            ->willReturn($juniorRevisedRoutes = new IlluminateRouteCollection());
+        $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Act
-        $actualRoutes = (new IlluminateRoutingEditor($juniorRoutingEditor->reveal()))
-            ->reviseRouting(new IlluminateRouteCollection());
+        $revisedRoutes = $illuminateEditor->reviseRouting(new IlluminateRouteCollection());
 
         // Assert
-        self::assertSame($expectedRoutes, $actualRoutes);
+        self::assertSame($juniorRevisedRoutes, $revisedRoutes);
     }
 
     public function testRejectsRevisingNonIlluminateRoutes(): void
     {
         // Arrange
-        /** @var RoutingEditorInterface|ObjectProphecy $juniorRoutingEditor */
-        $juniorRoutingEditor = $this->prophesize(RoutingEditorInterface::class);
+        $juniorEditor = $this->createRoutingEditorProphecy();
+        $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Assert
         $this->expectException(\InvalidArgumentException::class);
 
         // Act
-        (new IlluminateRoutingEditor($juniorRoutingEditor->reveal()))
-            ->reviseRouting(new SymfonyRouteCollection());
+        $illuminateEditor->reviseRouting(new SymfonyRouteCollection());
     }
 
     public function testRefuseARevisedNonIlluminateRouteCollection(): void
     {
         // Arrange
-        /** @var RoutingEditorInterface|ObjectProphecy $juniorRoutingEditor */
-        $juniorRoutingEditor = $this->prophesize(RoutingEditorInterface::class);
-        $juniorRoutingEditor->reviseRouting(Argument::any())
+        $juniorEditor = $this->createRoutingEditorProphecy();
+        $juniorEditor->reviseRouting(Argument::any())
             ->willReturn(new SymfonyRouteCollection());
+        $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 
         // Assert
         $this->expectException(\InvalidArgumentException::class);
 
         // Act
-        (new IlluminateRoutingEditor($juniorRoutingEditor->reveal()))
-            ->reviseRouting(new IlluminateRouteCollection());
+        $illuminateEditor->reviseRouting(new IlluminateRouteCollection());
+    }
+
+    /**
+     * @return RoutingEditorInterface|ObjectProphecy
+     */
+    private function createRoutingEditorProphecy(): ObjectProphecy
+    {
+        return $this->prophesize(RoutingEditorInterface::class);
     }
 }

@@ -117,8 +117,8 @@ final class RouteTaggingTest extends TestCase
     {
         // Arrange
         $router = $this->getRouter();
-        $router->addRoute('GET', '/foo', static function () { })->tag('bar');
-        $router->addRoute('POST', '/bar', static function () { })->tag('baz');
+        $router->get('/foo')->tag('bar');
+        $router->post('/baz')->tag('quz');
 
         // Act
         $taggedRoutes = $router->getByTag('foobar');
@@ -132,9 +132,9 @@ final class RouteTaggingTest extends TestCase
     {
         // Arrange
         $router = $this->getRouter();
-        $fooRoute = $router->addRoute('GET', '/foo', static function () { })->tag('foobar');
-        $barRoute = $router->addRoute('POST', '/bar', static function () { })->tag('baz');
-        $bazRoute = $router->addRoute('PUT', '/baz', static function () { })->tag('foobar');
+        $fooRoute = $router->get('/foo')->tag('foobar');
+        $barRoute = $router->post('/bar')->tag('baz');
+        $bazRoute = $router->put('/baz')->tag('foobar');
 
         // Act
         $taggedRoutes = $router->getByTag('foobar');
@@ -155,14 +155,14 @@ final class RouteTaggingTest extends TestCase
 
         // Act
         $barRoute = $bazRoute = null;
-        $fooRoute = $router->addRoute('GET', '/foo', static function () { });
+        $fooRoute = $router->get('/foo');
         $router->group(
             [
                 'tags' => ['barbaz'],
             ],
             static function (Router $router) use (&$barRoute, &$bazRoute): void {
-                $barRoute = $router->addRoute('POST', '/bar', static function () { });
-                $bazRoute = $router->addRoute('PUT', '/baz', static function () { });
+                $barRoute = $router->post('/bar');
+                $bazRoute = $router->put('/baz');
             }
         );
 
@@ -185,14 +185,14 @@ final class RouteTaggingTest extends TestCase
                 'tags' => ['foobar'],
             ],
             static function (Router $router) use (&$fooRoute, &$barRoute): void {
-                $fooRoute = $router->addRoute('GET', '/foo', static function () { });
+                $fooRoute = $router->get('/foo');
 
                 $router->group(
                     [
                         'tags' => ['bar']
                     ],
                     static function (Router $router) use (&$barRoute): void {
-                        $barRoute = $router->addRoute('POST', '/bar', static function () { });
+                        $barRoute = $router->post('/bar');
                     }
                 );
             }
