@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Tests\Unit\Version;
 
+use DSLabs\LaravelRedaktor\Version\InvalidRequestException;
 use DSLabs\LaravelRedaktor\Version\QueryStringResolver;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
  */
 final class QueryStringResolverTest extends TestCase
 {
-    public function testRetrievesNullIfParameterIsNotDefined(): void
+    public function testRetrievesEmptyVersionIfParameterIsNotDefined(): void
     {
         // Act
         $version = (new QueryStringResolver('foo'))->resolve(new Request());
@@ -35,10 +36,10 @@ final class QueryStringResolverTest extends TestCase
         self::assertSame('bar', (string)$version);
     }
 
-    public function testThrowsAnInvalidateArgumentExceptionIfArgumentIsNotAnIlluminateRequest(): void
+    public function testThrowsAnExceptionIfTheArgumentIsNotAnIlluminateRequest(): void
     {
         // Assert
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidRequestException::class);
 
         // Act
         (new QueryStringResolver('Foo'))->resolve(

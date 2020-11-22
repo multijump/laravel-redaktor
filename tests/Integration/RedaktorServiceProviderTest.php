@@ -102,13 +102,39 @@ final class RedaktorServiceProviderTest extends TestCase
         $request->headers->set('API-Version', 'foo');
 
         // Act
-        $version = $this->app->get(VersionResolver::class)->resolve($request);
+        $versionResolver = $this->app->get(VersionResolver::class);
+        $version = $versionResolver->resolve($request);
 
         // Assert
+        self::assertInstanceOf(CustomHeaderResolver::class, $versionResolver);
         self::assertSame('foo', (string)$version);
     }
 
-    public function testRetrievesRevisionNameUsingConfiguredResolver(): void
+    public function testRetrievesRevisionNameUsingConfiguredCustomHeaderResolver(): void
+    {
+        // Arrange
+        $this->withConfig([
+            'redaktor.resolver' => [
+                'id' => CustomHeaderResolver::class,
+                'config' => [
+                    'name' => 'version',
+                ]
+            ]
+        ]);
+
+        $request = new Request();
+        $request->headers->set('version', 'foo');
+
+        // Act
+        $versionResolver = $this->app->get(VersionResolver::class);
+        $version = $versionResolver->resolve($request);
+
+        // Assert
+        self::assertInstanceOf(CustomHeaderResolver::class, $versionResolver);
+        self::assertSame('foo', (string)$version);
+    }
+
+    public function testRetrievesRevisionNameUsingConfiguredQueryStringResolver(): void
     {
         // Arrange
         $this->withConfig([
@@ -125,9 +151,11 @@ final class RedaktorServiceProviderTest extends TestCase
         ]);
 
         // Act
-        $version = $this->app->get(VersionResolver::class)->resolve($request);
+        $versionResolver = $this->app->get(VersionResolver::class);
+        $version = $versionResolver->resolve($request);
 
         // Assert
+        self::assertInstanceOf(QueryStringResolver::class, $versionResolver);
         self::assertSame('bar', (string)$version);
     }
 

@@ -8,6 +8,9 @@ use DSLabs\Redaktor\Version\Version;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Http\Request;
 
+/**
+ * Resolve target version from a Request custom header.
+ */
 final class CustomHeaderResolver implements VersionResolver
 {
     /**
@@ -15,12 +18,18 @@ final class CustomHeaderResolver implements VersionResolver
      */
     private $name;
 
+    /**
+     * @param string $name Header name to get the target version from.
+     */
     public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    public function resolve($request): Version
+    /**
+     * @param Request $request
+     */
+    public function resolve(object $request): Version
     {
         if (!$request instanceof Request) {
             throw InvalidRequestException::make($request);
