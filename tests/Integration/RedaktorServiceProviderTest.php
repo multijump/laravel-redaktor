@@ -9,6 +9,7 @@ use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Version\CustomHeaderResolver;
 use DSLabs\LaravelRedaktor\Version\QueryStringResolver;
+use DSLabs\LaravelRedaktor\Version\UriPathResolver;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
@@ -157,6 +158,29 @@ final class RedaktorServiceProviderTest extends TestCase
         // Assert
         self::assertInstanceOf(QueryStringResolver::class, $versionResolver);
         self::assertSame('bar', (string)$version);
+    }
+
+    public function testRetrievesRevisionNameUsingConfiguredResolver(): void
+    {
+        // Arrange
+        $this->withConfig([
+            'redaktor.resolver' => [
+                'id' => UriPathResolver::class,
+                'config' => [
+                    'index' => 0,
+                ],
+            ],
+        ]);
+
+        $request = Request::create('/foo/users');
+
+        // Act
+        $versionResolver = $this->app->get(VersionResolver::class);
+        $version = $versionResolver->resolve($request);
+
+        // Assert
+        self::assertInstanceOf(UriPathResolver::class, $versionResolver);
+        self::assertSame('foo', (string)$version);
     }
 
     public function testPublishesConfig(): void

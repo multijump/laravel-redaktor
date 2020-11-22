@@ -154,7 +154,33 @@ If you would like to use a different header name, just modify the value of the `
 
 #### URI Path
 
-_To be implemented_
+APIs defining the version in the URI (i.e.: `/api/v1/users`) may use `\DSLabs\LaravelRedaktor\Version\UriPathResolver` as their version resolver.
+
+The URI Path resolver extracts the target version from the `index` position (0-based) of the URI path segments. That is, setting `index` to `1` will return `2020-10-20` as the target version for the following request:
+```text
+   GET /api/2020-10-20/users HTTP/1.1
+   Host: example.org
+```
+
+To configure use this resolver, override the `resolver` section in the `/config/redaktor.php` file:
+```php
+   return [
+
+       /*
+        * Configure the version resolver to be used.
+        */
+       'resolver' => [
+           'id' => \DSLabs\LaravelRedaktor\Version\UriPathResolver::class,
+           'config' => [
+               'index' => 1,
+           ],
+       ],
+
+      // ...
+
+   ];
+```
+
 
 #### Query String
 
