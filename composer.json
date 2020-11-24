@@ -23,7 +23,7 @@
         "php": "^7.2",
         "ds-labs/redaktor": "dev-master",
         "illuminate/http": "^6|^7",
-        "illuminate/routing": "^7.29",
+        "illuminate/routing": "^6|^7",
         "illuminate/support": "^6|^7"
     },
     "require-dev": {
