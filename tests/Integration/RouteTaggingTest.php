@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Tests\Integration;
 
-use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
+use DSLabs\LaravelRedaktor\RouteTaggingServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithRouting;
 use Illuminate\Contracts\Foundation\Application;
@@ -228,7 +228,7 @@ final class RouteTaggingTest extends TestCase
     protected function getServiceProviders(Application $app): array
     {
         return [
-            RedaktorServiceProvider::class,
+            RouteTaggingServiceProvider::class,
         ];
     }
 }

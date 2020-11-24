@@ -49,7 +49,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "DSLabs\\LaravelRedaktor\\RedaktorServiceProvider"
+                "DSLabs\\LaravelRedaktor\\RedaktorServiceProvider",
+                "DSLabs\\LaravelRedaktor\\RouteTaggingServiceProvider"
             ]
         }
     }
