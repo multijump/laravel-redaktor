@@ -52,11 +52,5 @@
                 "DSLabs\\LaravelRedaktor\\RedaktorServiceProvider"
             ]
         }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/projects/redaktor"
-        }
-    ]
+    }
 }
