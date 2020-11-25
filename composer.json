@@ -21,13 +21,13 @@
     ],
     "require": {
         "php": "^7.2",
-        "ds-labs/redaktor": "dev-master",
+        "ds-labs/redaktor": "dev-main",
         "illuminate/http": "^6|^7",
         "illuminate/routing": "^6|^7",
         "illuminate/support": "^6|^7"
     },
     "require-dev": {
-        "laravel/laravel": "^7",
+        "laravel/laravel": "^6|^7",
         "phpunit/phpunit": "^8.4"
     },
     "autoload": {

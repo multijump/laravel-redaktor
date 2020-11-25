@@ -9,7 +9,7 @@ use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithRouting;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Routing\Route;
-use Illuminate\Routing\RouteCollectionInterface;
+use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
 use PHPUnit\Framework\TestCase;
 
@@ -124,7 +124,7 @@ final class RouteTaggingTest extends TestCase
         $taggedRoutes = $router->getByTag('foobar');
 
         // Assert
-        self::assertInstanceOf(RouteCollectionInterface::class, $taggedRoutes);
+        self::assertInstanceOf(RouteCollection::class, $taggedRoutes);
         self::assertCount(0, $taggedRoutes);
     }
 
@@ -140,7 +140,7 @@ final class RouteTaggingTest extends TestCase
         $taggedRoutes = $router->getByTag('foobar');
 
         // Assert
-        self::assertInstanceOf(RouteCollectionInterface::class, $taggedRoutes);
+        self::assertInstanceOf(RouteCollection::class, $taggedRoutes);
         self::assertCount(2, $taggedRoutes);
 
         self::assertContains($fooRoute, $taggedRoutes->getRoutes());

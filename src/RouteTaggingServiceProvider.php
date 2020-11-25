@@ -96,7 +96,7 @@ final class RouteTaggingServiceProvider extends ServiceProvider
         /**
          * Retrieves a RouteCollectionInterface containing all routes matching the given tag.
          */
-        Router::macro('getByTag', function (string $tag): RouteCollectionInterface {
+        Router::macro('getByTag', function (string $tag): RouteCollection {
 
             /** @var Router $this */
             return array_reduce(

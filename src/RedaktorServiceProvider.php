@@ -98,6 +98,39 @@ final class RedaktorServiceProvider extends ServiceProvider
         /** @var \App\Http\Kernel $kernel */
         $kernel = $this->app->make(Kernel::class);
         $kernel->pushMiddleware(RoutingRedaktor::class);
-        $kernel->appendMiddlewareToGroup('api', MessageRedaktor::class);
+
+        $laravelVersion = $this->app->version();
+        if (version_compare($laravelVersion, '6.9', '>=')) {
+            $kernel->appendMiddlewareToGroup('api', MessageRedaktor::class);
+        } else {
+            self::appendMiddlewareToGroup($kernel, 'api', MessageRedaktor::class);
+        }
+    }
+
+    private static function appendMiddlewareToGroup(Kernel $kernel, string $group, string $middleware): void
+    {
+        $appendMiddlewareToGroup = (function (string $group, string $middleware) {
+            if (! isset($this->middlewareGroups[$group])) {
+                throw new \InvalidArgumentException("The [{$group}] middleware group has not been defined.");
+            }
+
+            if (array_search($middleware, $this->middlewareGroups[$group]) === false) {
+                $this->middlewareGroups[$group][] = $middleware;
+            }
+
+            $this->router->middlewarePriority = $this->middlewarePriority;
+
+            foreach ($this->middlewareGroups as $key => $middleware) {
+                $this->router->middlewareGroup($key, $middleware);
+            }
+
+            foreach ($this->routeMiddleware as $key => $middleware) {
+                $this->router->aliasMiddleware($key, $middleware);
+            }
+
+            return $this;
+        })->bindTo($kernel, get_class($kernel));
+
+        $appendMiddlewareToGroup($group, $middleware);
     }
 }
