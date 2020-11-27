@@ -53,5 +53,11 @@
                 "DSLabs\\LaravelRedaktor\\RouteTaggingServiceProvider"
             ]
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:ds-labs/redaktor.git"
+        }
+    ]
 }

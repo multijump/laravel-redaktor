@@ -1,0 +1,52 @@
+name: Run Tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ 7.2, 7.3, 7.4 ]
+        laravel-version: [ ^6, ^7 ]
+
+    name: PHP ${{ matrix.php }} [Laravel ${{ matrix.laravel-version }}]
+
+    steps:
+      - name: Update apt
+        run: sudo apt-get update
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@2.8.0
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2.1.0
+        with:
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Cache packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files/
+          key: composer
+
+      - name: Install dependencies
+        run: |
+          composer update --with laravel/laravel:${{ matrix.laravel-version }} --no-interaction --no-progress \
+            --prefer-dist --prefer-stable
+
+      - name: Run Tests
+        run: composer test
