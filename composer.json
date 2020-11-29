@@ -22,12 +22,12 @@
     "require": {
         "php": "^7.3|^8",
         "ds-labs/redaktor": "dev-main",
-        "illuminate/http": "^6|^7",
-        "illuminate/routing": "^6|^7",
-        "illuminate/support": "^6|^7"
+        "illuminate/http": "^6|^7|^8",
+        "illuminate/routing": "^6|^7|^8",
+        "illuminate/support": "^6|^7|^8"
     },
     "require-dev": {
-        "laravel/laravel": "^6|^7",
+        "laravel/laravel": "^6|^7|^8",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9"
     },
