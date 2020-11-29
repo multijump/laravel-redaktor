@@ -27,7 +27,7 @@ Inspired by [Stripe's API versioning](https://stripe.com/blog/api-versioning) st
 
 ## Requirements
 
-* PHP 7.2 or higher.
+* PHP 7.3 or higher.
 * Laravel 6 or higher.
 
 ## Installation

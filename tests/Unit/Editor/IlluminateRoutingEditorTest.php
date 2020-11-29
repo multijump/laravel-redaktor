@@ -13,6 +13,7 @@ use Illuminate\Routing\RouteCollection as IlluminateRouteCollection;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
@@ -21,6 +22,8 @@ use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
  */
 final class IlluminateRoutingEditorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testRetrieveTheBriefedVersion(): void
     {
         // Arrange

@@ -24,7 +24,7 @@ final class ReviseRequestTest extends TestCase
     use InteractsWithRouting;
     use InteractsWithConfiguration;
 
-    protected function getServiceProviders(): array
+    protected function getServiceProviders(Application $app): array
     {
         return [
             RedaktorServiceProvider::class,

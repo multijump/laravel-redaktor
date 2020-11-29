@@ -11,6 +11,7 @@ use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithRouting;
 use DSLabs\LaravelRedaktor\Tests\Doubles\ResponseRevisionStub;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\ResponseRevision;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +21,7 @@ final class ReviseResponseTest extends TestCase
     use InteractsWithRouting;
     use InteractsWithConfiguration;
 
-    public function getServiceProviders(): array
+    public function getServiceProviders(Application $app): array
     {
         return [
             RedaktorServiceProvider::class,

@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -22,6 +23,8 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
  */
 final class IlluminateMessageEditorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testRetrievesTheBriefedVersion(): void
     {
         // Arrange

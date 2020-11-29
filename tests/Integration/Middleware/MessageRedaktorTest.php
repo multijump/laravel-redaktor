@@ -11,6 +11,7 @@ use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Tests\Doubles\MessageRevisionStub;
 use DSLabs\LaravelRedaktor\Tests\Request;
 use DSLabs\Redaktor\Revision\MessageRevision;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +24,7 @@ final class MessageRedaktorTest extends TestCase
     use InteractsWithApplication;
     use InteractsWithConfiguration;
 
-    protected function getServiceProviders(): array
+    protected function getServiceProviders(Application $app): array
     {
         return [
             RedaktorServiceProvider::class,

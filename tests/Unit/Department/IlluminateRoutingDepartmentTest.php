@@ -14,12 +14,15 @@ use DSLabs\Redaktor\Editor\RoutingEditorInterface;
 use DSLabs\Redaktor\Revision\Revision;
 use DSLabs\Redaktor\Version\Version;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @see IlluminateRoutingDepartment
  */
 final class IlluminateRoutingDepartmentTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testProvidesAnIlluminateRoutingEditor(): void
     {
         // Arrange

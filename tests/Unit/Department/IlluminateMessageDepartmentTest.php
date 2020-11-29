@@ -14,12 +14,15 @@ use DSLabs\Redaktor\Editor\MessageEditorInterface;
 use DSLabs\Redaktor\Revision\Revision;
 use DSLabs\Redaktor\Version\Version;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @see IlluminateMessageDepartment
  */
 final class IlluminateMessageDepartmentTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testProvidesAnIlluminateMessageEditor(): void
     {
         // Arrange

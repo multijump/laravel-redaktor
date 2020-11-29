@@ -15,6 +15,7 @@ use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ final class RedaktorServiceProviderTest extends TestCase
     use InteractsWithApplication;
     use InteractsWithConfiguration;
 
-    protected function getServiceProviders(): array
+    protected function getServiceProviders(Application $app): array
     {
         return [
             RedaktorServiceProvider::class,
