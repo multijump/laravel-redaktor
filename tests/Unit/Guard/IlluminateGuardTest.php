@@ -97,9 +97,8 @@ final class IlluminateGuardTest extends TestCase
     {
         return $this->provideInvalidArguments() +
             [
-                [new \ArrayIterator(), \ArrayIterator::class]
+                [new \ArrayIterator(), \ArrayIterator::class],
             ];
-
     }
 
     public function provideInvalidRequests(): array
@@ -114,7 +113,7 @@ final class IlluminateGuardTest extends TestCase
     {
         return $this->provideInvalidArguments() +
             [
-                SymfonyResponse::class => [new SymfonyResponse(), SymfonyResponse::class]
+                SymfonyResponse::class => [new SymfonyResponse(), SymfonyResponse::class],
             ];
     }
 

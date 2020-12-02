@@ -50,7 +50,7 @@ final class RedaktorServiceProvider extends ServiceProvider
     {
         $this->app->singleton(
             VersionResolver::class,
-            static function(Container $container): VersionResolver {
+            static function (Container $container): VersionResolver {
                 $resolverConfig = $container->get('config')->get('redaktor.resolver');
 
                 $versionResolver = $container->make(
@@ -76,7 +76,7 @@ final class RedaktorServiceProvider extends ServiceProvider
 
     private function setupRevisionsRegistry(): void
     {
-        $this->app->singleton(InMemoryRegistry::class, static function(Container $container) {
+        $this->app->singleton(InMemoryRegistry::class, static function (Container $container) {
             $revisions = $container->get('config')->get('redaktor.revisions');
 
             return new InMemoryRegistry($revisions);
@@ -114,7 +114,7 @@ final class RedaktorServiceProvider extends ServiceProvider
                 throw new \InvalidArgumentException("The [{$group}] middleware group has not been defined.");
             }
 
-            if (array_search($middleware, $this->middlewareGroups[$group]) === false) {
+            if (array_search($middleware, $this->middlewareGroups[$group], true) === false) {
                 $this->middlewareGroups[$group][] = $middleware;
             }
 

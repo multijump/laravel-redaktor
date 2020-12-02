@@ -56,7 +56,7 @@ final class ReviseResponseTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createResponseRevisionDefinition($revisedResponse = new Response),
+                    self::createResponseRevisionDefinition($revisedResponse = new Response()),
                 ],
             ]
         );
@@ -81,7 +81,7 @@ final class ReviseResponseTest extends TestCase
             'redaktor.revisions',
             [
                 '2020-01' => [
-                    self::createResponseRevisionDefinition($revisedResponse = new Response),
+                    self::createResponseRevisionDefinition($revisedResponse = new Response()),
                 ],
             ]
         );

@@ -20,20 +20,17 @@ jobs:
     name: PHP ${{ matrix.php }} [Laravel ${{ matrix.laravel-version }}][${{ matrix.stability }}]
 
     steps:
-      - name: Update apt
-        run: sudo apt-get update
-
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Setup PHP Action
-        uses: shivammathur/setup-php@2.8.0
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: none
 
       - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2.1.0
+        uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}

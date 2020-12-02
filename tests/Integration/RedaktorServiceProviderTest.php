@@ -73,7 +73,7 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $this->withConfig([
-            'redaktor.resolver.id' => 'foo'
+            'redaktor.resolver.id' => 'foo',
         ]);
 
         // Assert
@@ -87,7 +87,8 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $this->withConfig([
-            'redaktor.resolver.id' => get_class(new class {}),
+            'redaktor.resolver.id' => get_class(new class() {
+            }),
         ]);
 
         // Assert
@@ -120,8 +121,8 @@ final class RedaktorServiceProviderTest extends TestCase
                 'id' => CustomHeaderResolver::class,
                 'config' => [
                     'name' => 'version',
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $request = new Request();
@@ -144,8 +145,8 @@ final class RedaktorServiceProviderTest extends TestCase
                 'id' => QueryStringResolver::class,
                 'config' => [
                     'name' => 'foo',
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $request = new Request([
@@ -192,7 +193,7 @@ final class RedaktorServiceProviderTest extends TestCase
 
         // Act
         Artisan::call('vendor:publish', [
-            '--provider' => RedaktorServiceProvider::class
+            '--provider' => RedaktorServiceProvider::class,
         ]);
 
         // Assert
@@ -226,8 +227,8 @@ final class RedaktorServiceProviderTest extends TestCase
                 'foo' => [
                     static function () { },
                     static function () { },
-                ]
-            ]
+                ],
+            ],
         ]);
 
         // Act

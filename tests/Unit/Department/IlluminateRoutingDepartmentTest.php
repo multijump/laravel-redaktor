@@ -81,7 +81,8 @@ final class IlluminateRoutingDepartmentTest extends TestCase
         $juniorRoutingEditorProphecy = $this->prophesize(RoutingEditorInterface::class);
         $juniorRoutingEditorProphecy->briefedRevisions()
             ->willReturn($expectedRevisions = [
-                new class implements Revision {},
+                new class() implements Revision {
+                },
             ]);
 
         $illuminateRoutingDepartment = new IlluminateRoutingDepartment(

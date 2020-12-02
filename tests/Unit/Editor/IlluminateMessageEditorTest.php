@@ -46,8 +46,10 @@ final class IlluminateMessageEditorTest extends TestCase
         $juniorEditor = $this->createMessageEditorProphecy();
         $juniorEditor->briefedRevisions()
             ->willReturn($expectedRevisions = [
-                new class implements Revision {},
-                new class implements Revision {},
+                new class() implements Revision {
+                },
+                new class() implements Revision {
+                },
             ]);
         $illuminateEditor = new IlluminateMessageEditor($juniorEditor->reveal());
 

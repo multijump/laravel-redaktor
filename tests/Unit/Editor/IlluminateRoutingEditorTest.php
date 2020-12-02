@@ -45,8 +45,10 @@ final class IlluminateRoutingEditorTest extends TestCase
         $juniorEditor = $this->createRoutingEditorProphecy();
         $juniorEditor->briefedRevisions()
             ->willReturn($expectedRevisions = [
-                new class implements Revision {},
-                new class implements Revision {},
+                new class() implements Revision {
+                },
+                new class() implements Revision {
+                },
             ]);
         $illuminateEditor = new IlluminateRoutingEditor($juniorEditor->reveal());
 

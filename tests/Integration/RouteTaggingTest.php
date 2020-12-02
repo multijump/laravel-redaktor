@@ -189,7 +189,7 @@ final class RouteTaggingTest extends TestCase
 
                 $router->group(
                     [
-                        'tags' => ['bar']
+                        'tags' => ['bar'],
                     ],
                     static function (Router $router) use (&$barRoute): void {
                         $barRoute = $router->post('/bar');

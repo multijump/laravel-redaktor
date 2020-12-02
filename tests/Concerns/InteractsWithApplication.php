@@ -67,7 +67,7 @@ trait InteractsWithApplication
     private function createApplication(): Application
     {
         /** @var Application $app */
-        $app = require __DIR__.'/../../vendor/laravel/laravel/bootstrap/app.php';
+        $app = require __DIR__ . '/../../vendor/laravel/laravel/bootstrap/app.php';
 
         $app->instance('request', new Request());
         $app->make(Kernel::class)->bootstrap();

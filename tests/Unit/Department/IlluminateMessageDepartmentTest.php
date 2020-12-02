@@ -81,7 +81,8 @@ final class IlluminateMessageDepartmentTest extends TestCase
         $juniorMessageEditorProphecy = $this->prophesize(MessageEditorInterface::class);
         $juniorMessageEditorProphecy->briefedRevisions()
             ->willReturn($expectedRevisions = [
-                new class implements Revision {},
+                new class() implements Revision {
+                },
             ]);
 
         $illuminateMessageDepartment = new IlluminateMessageDepartment(

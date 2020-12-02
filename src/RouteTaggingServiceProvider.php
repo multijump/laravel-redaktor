@@ -25,7 +25,7 @@ final class RouteTaggingServiceProvider extends ServiceProvider
             function ($tag): self {
                 $wrappedTag = is_array($tag) ? $tag : [$tag];
 
-                if($wrappedTag !== array_filter($wrappedTag, 'is_string')) {
+                if ($wrappedTag !== array_filter($wrappedTag, 'is_string')) {
                     throw new \TypeError(
                         sprintf(
                             'Argument %s passed to %s::%s() must be of the type string|string[], %s given.',
@@ -89,7 +89,7 @@ final class RouteTaggingServiceProvider extends ServiceProvider
                     return false;
                 }
 
-                return in_array($tag,  $tags, true);
+                return in_array($tag, $tags, true);
             }
         );
 
