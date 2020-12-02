@@ -1,0 +1,43 @@
+name: Static Code Analysis
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ 7.4 ]
+
+    name: Static Code Analysis
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: php-cs-fixer
+
+      - name: Cache packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files/
+          key: composer
+
+      - name: Install dependencies
+        run: |
+          composer update --no-interaction --no-progress --prefer-dist --prefer-stable
+
+      - name: Run PHP CS Fixer
+        env:
+          PHP_CS_FIXER_FUTURE_MODE: 1
+        run: |
+          php-cs-fixer fix --dry-run --verbose --diff
