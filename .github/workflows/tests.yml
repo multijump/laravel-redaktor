@@ -23,23 +23,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup PHP Action
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          coverage: none
-
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
-      - name: Cache packages
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.composer/cache/files/
-          key: composer
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: |
