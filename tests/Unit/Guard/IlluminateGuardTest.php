@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor\Tests\Unit\Guard;
 
 use DSLabs\LaravelRedaktor\Guard\IlluminateGuard;
+use DSLabs\LaravelRedaktor\Guard\InvalidArgumentException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -33,7 +34,7 @@ final class IlluminateGuardTest extends TestCase
     public function testGuardsRouteCollectionAgainstNonIlluminateRouteCollectionInstance($routeCollection, string $type): void
     {
         // Assert
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches(sprintf('[%s]', $type));
 
         // Act
@@ -55,7 +56,7 @@ final class IlluminateGuardTest extends TestCase
     public function testGuardsRequestAgainstNonIlluminateRequestInstance($request, string $type): void
     {
         // Assert
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($type);
 
         // Act
@@ -86,7 +87,7 @@ final class IlluminateGuardTest extends TestCase
     public function testGuardsResponseAgainstNonIlluminateResponseInstance($response, string $type): void
     {
         // Assert
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($type);
 
         // Act
