@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor;
 
+use DSLabs\LaravelRedaktor\Department\IlluminateMessageDepartment;
+use DSLabs\LaravelRedaktor\Department\IlluminateRoutingDepartment;
 use DSLabs\LaravelRedaktor\Middleware\MessageRedaktor;
 use DSLabs\LaravelRedaktor\Middleware\RoutingRedaktor;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
+use DSLabs\Redaktor\Department\GenericMessageDepartment;
+use DSLabs\Redaktor\Department\GenericRoutingDepartment;
 use DSLabs\Redaktor\Department\MessageDepartment;
 use DSLabs\Redaktor\Department\RoutingDepartment;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
@@ -70,8 +74,19 @@ final class RedaktorServiceProvider extends ServiceProvider
 
     private function setupEditorProviders(): void
     {
-        $this->app->singleton(MessageDepartment::class);
-        $this->app->singleton(RoutingDepartment::class);
+        $this->app->bind(IlluminateMessageDepartment::class, static function () {
+            return new IlluminateMessageDepartment(
+                new GenericMessageDepartment()
+            );
+        });
+        $this->app->bind(IlluminateRoutingDepartment::class, static function () {
+            return new IlluminateRoutingDepartment(
+                new GenericRoutingDepartment()
+            );
+        });
+
+        $this->app->bind(MessageDepartment::class, IlluminateMessageDepartment::class);
+        $this->app->bind(RoutingDepartment::class, IlluminateRoutingDepartment::class);
     }
 
     private function setupRevisionsRegistry(): void

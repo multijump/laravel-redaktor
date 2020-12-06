@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor\Department;
 
 use DSLabs\LaravelRedaktor\Editor\IlluminateMessageEditor;
-use DSLabs\Redaktor\Department\EditorProvider;
+use DSLabs\Redaktor\Department\MessageDepartment;
 use DSLabs\Redaktor\Editor\Brief;
 use DSLabs\Redaktor\Editor\EditorInterface;
 use DSLabs\Redaktor\Editor\MessageEditorInterface;
 
-final class IlluminateMessageDepartment implements EditorProvider
+final class IlluminateMessageDepartment implements MessageDepartment
 {
     /**
-     * @var EditorProvider
+     * @var MessageDepartment
      */
-    private $juniorEditorProvider;
+    private $messageDepartment;
 
-    public function __construct(EditorProvider $juniorEditorProvider)
+    public function __construct(MessageDepartment $messageDepartment)
     {
-        $this->juniorEditorProvider = $juniorEditorProvider;
+        $this->messageDepartment = $messageDepartment;
     }
 
     /**
@@ -29,12 +29,12 @@ final class IlluminateMessageDepartment implements EditorProvider
      */
     public function provideEditor(Brief $brief): EditorInterface
     {
-        $juniorEditor = $this->juniorEditorProvider->provideEditor($brief);
-        if (!$juniorEditor instanceof MessageEditorInterface) {
-            self::throwUnexpectedEditorException($juniorEditor);
+        $messageEditor = $this->messageDepartment->provideEditor($brief);
+        if (!$messageEditor instanceof MessageEditorInterface) {
+            self::throwUnexpectedEditorException($messageEditor);
         }
 
-        return new IlluminateMessageEditor($juniorEditor);
+        return new IlluminateMessageEditor($messageEditor);
     }
 
     private static function throwUnexpectedEditorException(EditorInterface $juniorEditor): void
