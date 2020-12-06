@@ -7,7 +7,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Unit\Department;
 use DSLabs\LaravelRedaktor\Department\IlluminateMessageDepartment;
 use DSLabs\LaravelRedaktor\Department\UnexpectedEditorException;
 use DSLabs\LaravelRedaktor\Editor\IlluminateMessageEditor;
-use DSLabs\LaravelRedaktor\Tests\Doubles\Department\EditorProviderStub;
+use DSLabs\LaravelRedaktor\Tests\Doubles\Department\MessageEditorProviderStub;
 use DSLabs\Redaktor\Editor\Brief;
 use DSLabs\Redaktor\Editor\EditorInterface;
 use DSLabs\Redaktor\Editor\MessageEditorInterface;
@@ -30,7 +30,7 @@ final class IlluminateMessageDepartmentTest extends TestCase
             ->reveal();
 
         $illuminateMessageDepartment = new IlluminateMessageDepartment(
-            new EditorProviderStub($juniorMessageEditor)
+            new MessageEditorProviderStub($juniorMessageEditor)
         );
 
         // Act
@@ -46,7 +46,7 @@ final class IlluminateMessageDepartmentTest extends TestCase
         $juniorGenericEditor = $this->prophesize(EditorInterface::class)->reveal();
 
         $illuminateMessageDepartment = new IlluminateMessageDepartment(
-            new EditorProviderStub($juniorGenericEditor)
+            new MessageEditorProviderStub($juniorGenericEditor)
         );
 
         // Assert
@@ -64,7 +64,7 @@ final class IlluminateMessageDepartmentTest extends TestCase
             ->willReturn($expectedVersion = new Version('foo'));
 
         $illuminateMessageDepartment = new IlluminateMessageDepartment(
-            new EditorProviderStub($juniorMessageEditorProphecy->reveal())
+            new MessageEditorProviderStub($juniorMessageEditorProphecy->reveal())
         );
         $illuminateMessageEditor = $illuminateMessageDepartment->provideEditor(self::createBrief());
 
@@ -86,7 +86,7 @@ final class IlluminateMessageDepartmentTest extends TestCase
             ]);
 
         $illuminateMessageDepartment = new IlluminateMessageDepartment(
-            new EditorProviderStub($juniorMessageEditorProphecy->reveal())
+            new MessageEditorProviderStub($juniorMessageEditorProphecy->reveal())
         );
         $editor = $illuminateMessageDepartment->provideEditor(self::createBrief());
 

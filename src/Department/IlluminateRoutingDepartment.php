@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace DSLabs\LaravelRedaktor\Department;
 
 use DSLabs\LaravelRedaktor\Editor\IlluminateRoutingEditor;
-use DSLabs\Redaktor\Department\EditorProvider;
+use DSLabs\Redaktor\Department\RoutingDepartment;
 use DSLabs\Redaktor\Editor\Brief;
 use DSLabs\Redaktor\Editor\EditorInterface;
 use DSLabs\Redaktor\Editor\RoutingEditorInterface;
 
-final class IlluminateRoutingDepartment implements EditorProvider
+final class IlluminateRoutingDepartment implements RoutingDepartment
 {
     /**
-     * @var EditorProvider
+     * @var RoutingDepartment
      */
-    private $juniorEditorProvider;
+    private $routingDepartment;
 
-    public function __construct(EditorProvider $juniorEditorProvider)
+    public function __construct(RoutingDepartment $routingDepartment)
     {
-        $this->juniorEditorProvider = $juniorEditorProvider;
+        $this->routingDepartment = $routingDepartment;
     }
 
     /**
@@ -29,12 +29,12 @@ final class IlluminateRoutingDepartment implements EditorProvider
      */
     public function provideEditor(Brief $brief): EditorInterface
     {
-        $juniorEditor = $this->juniorEditorProvider->provideEditor($brief);
-        if (!$juniorEditor instanceof RoutingEditorInterface) {
-            self::throwUnexpectedEditorException($juniorEditor);
+        $routingEditor = $this->routingDepartment->provideEditor($brief);
+        if (!$routingEditor instanceof RoutingEditorInterface) {
+            self::throwUnexpectedEditorException($routingEditor);
         }
 
-        return new IlluminateRoutingEditor($juniorEditor);
+        return new IlluminateRoutingEditor($routingEditor);
     }
 
     private static function throwUnexpectedEditorException(EditorInterface $juniorEditor): void

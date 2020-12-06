@@ -7,7 +7,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Unit\Department;
 use DSLabs\LaravelRedaktor\Department\IlluminateRoutingDepartment;
 use DSLabs\LaravelRedaktor\Department\UnexpectedEditorException;
 use DSLabs\LaravelRedaktor\Editor\IlluminateRoutingEditor;
-use DSLabs\LaravelRedaktor\Tests\Doubles\Department\EditorProviderStub;
+use DSLabs\LaravelRedaktor\Tests\Doubles\Department\RoutingEditorProviderStub;
 use DSLabs\Redaktor\Editor\Brief;
 use DSLabs\Redaktor\Editor\EditorInterface;
 use DSLabs\Redaktor\Editor\RoutingEditorInterface;
@@ -30,7 +30,7 @@ final class IlluminateRoutingDepartmentTest extends TestCase
             ->reveal();
 
         $illuminateRoutingDepartment = new IlluminateRoutingDepartment(
-            new EditorProviderStub($juniorRoutingEditor)
+            new RoutingEditorProviderStub($juniorRoutingEditor)
         );
 
         // Act
@@ -40,13 +40,13 @@ final class IlluminateRoutingDepartmentTest extends TestCase
         self::assertInstanceOf(IlluminateRoutingEditor::class, $routingEditor);
     }
 
-    public function testRefusesNonRoutingJuniorEditors(): void
+    public function testRefusesNonRoutingJuniorEditor(): void
     {
         // Arrange
         $juniorGenericEditor = $this->prophesize(EditorInterface::class)->reveal();
 
         $illuminateRoutingDepartment = new IlluminateRoutingDepartment(
-            new EditorProviderStub($juniorGenericEditor)
+            new RoutingEditorProviderStub($juniorGenericEditor)
         );
 
         // Assert
@@ -64,7 +64,7 @@ final class IlluminateRoutingDepartmentTest extends TestCase
             ->willReturn($expectedVersion = new Version('foo'));
 
         $illuminateRoutingDepartment = new IlluminateRoutingDepartment(
-            new EditorProviderStub($juniorRoutingEditorProphecy->reveal())
+            new RoutingEditorProviderStub($juniorRoutingEditorProphecy->reveal())
         );
         $illuminateRoutingEditor = $illuminateRoutingDepartment->provideEditor(self::createBrief());
 
@@ -86,7 +86,7 @@ final class IlluminateRoutingDepartmentTest extends TestCase
             ]);
 
         $illuminateRoutingDepartment = new IlluminateRoutingDepartment(
-            new EditorProviderStub($juniorRoutingEditorProphecy->reveal())
+            new RoutingEditorProviderStub($juniorRoutingEditorProphecy->reveal())
         );
         $editor = $illuminateRoutingDepartment->provideEditor(self::createBrief());
 
