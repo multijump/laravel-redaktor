@@ -28,36 +28,18 @@ final class RedaktorServiceProviderTest extends TestCase
     use InteractsWithApplication;
     use InteractsWithConfiguration;
 
-    protected function getServiceProviders(Application $app): array
-    {
-        return [
-            RedaktorServiceProvider::class,
-        ];
-    }
-
-    public function testDefaultConfigurationFormat(): void
-    {
-        // Act
-        $redaktorConfig = $this->app->get('config')->get('redaktor');
-
-        // Assert
-        self::assertIsArray($redaktorConfig);
-        self::assertArrayHasKey('resolver', $redaktorConfig);
-        self::assertArrayHasKey('id', $resolver = $redaktorConfig['resolver']);
-        self::assertArrayHasKey('config', $resolver);
-        self::assertArrayHasKey('name', $resolver['config']);
-
-        self::assertArrayHasKey('revisions', $redaktorConfig);
-    }
-
     public function testDefaultsToCustomHeaderResolver(): void
     {
+        // Arrange
+        $request = new Request();
+        $request->headers->set('API-Version', 'foo');
+
         // Act
-        $resolverConfig = $this->app->get('config')->get('redaktor.resolver');
+        $version = $this->app->make(VersionResolver::class)
+            ->resolve($request);
 
         // Assert
-        self::assertSame(CustomHeaderResolver::class, $resolverConfig['id']);
-        self::assertSame(['name' => 'API-Version'], $resolverConfig['config']);
+        self::assertSame('foo', (string)$version);
     }
 
     public function testDefaultsToAnEmptyRevisionsList(): void
@@ -73,7 +55,12 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $this->withConfig([
-            'redaktor.resolver.id' => 'foo',
+            'redaktor.strategies' => [
+                [
+                    'id' => 'foo',
+                    'config' => [],
+                ],
+            ],
         ]);
 
         // Assert
@@ -87,8 +74,13 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $this->withConfig([
-            'redaktor.resolver.id' => get_class(new class() {
-            }),
+            'redaktor.strategies' => [
+                [
+                    'id' => get_class(new class() {
+                    }),
+                    'config' => [],
+                ],
+            ],
         ]);
 
         // Assert
@@ -105,11 +97,10 @@ final class RedaktorServiceProviderTest extends TestCase
         $request->headers->set('API-Version', 'foo');
 
         // Act
-        $versionResolver = $this->app->get(VersionResolver::class);
-        $version = $versionResolver->resolve($request);
+        $version = $this->app->get(VersionResolver::class)
+            ->resolve($request);
 
         // Assert
-        self::assertInstanceOf(CustomHeaderResolver::class, $versionResolver);
         self::assertSame('foo', (string)$version);
     }
 
@@ -117,23 +108,24 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $this->withConfig([
-            'redaktor.resolver' => [
-                'id' => CustomHeaderResolver::class,
-                'config' => [
-                    'name' => 'version',
+            'redaktor.strategies' => [
+                [
+                    'id' => CustomHeaderResolver::class,
+                    'config' => [
+                        'name' => 'X-Version',
+                    ],
                 ],
             ],
         ]);
 
         $request = new Request();
-        $request->headers->set('version', 'foo');
+        $request->headers->set('X-Version', 'foo');
 
         // Act
-        $versionResolver = $this->app->get(VersionResolver::class);
-        $version = $versionResolver->resolve($request);
+        $version = $this->app->get(VersionResolver::class)
+            ->resolve($request);
 
         // Assert
-        self::assertInstanceOf(CustomHeaderResolver::class, $versionResolver);
         self::assertSame('foo', (string)$version);
     }
 
@@ -141,10 +133,12 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $this->withConfig([
-            'redaktor.resolver' => [
-                'id' => QueryStringResolver::class,
-                'config' => [
-                    'name' => 'foo',
+            'redaktor.strategies' => [
+                [
+                    'id' => QueryStringResolver::class,
+                    'config' => [
+                        'name' => 'foo',
+                    ],
                 ],
             ],
         ]);
@@ -154,11 +148,10 @@ final class RedaktorServiceProviderTest extends TestCase
         ]);
 
         // Act
-        $versionResolver = $this->app->get(VersionResolver::class);
-        $version = $versionResolver->resolve($request);
+        $version = $this->app->get(VersionResolver::class)
+            ->resolve($request);
 
         // Assert
-        self::assertInstanceOf(QueryStringResolver::class, $versionResolver);
         self::assertSame('bar', (string)$version);
     }
 
@@ -166,10 +159,12 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $this->withConfig([
-            'redaktor.resolver' => [
-                'id' => UriPathResolver::class,
-                'config' => [
-                    'index' => 0,
+            'redaktor.strategies' => [
+                [
+                    'id' => UriPathResolver::class,
+                    'config' => [
+                        'index' => 0,
+                    ],
                 ],
             ],
         ]);
@@ -177,11 +172,10 @@ final class RedaktorServiceProviderTest extends TestCase
         $request = Request::create('/foo/users');
 
         // Act
-        $versionResolver = $this->app->get(VersionResolver::class);
-        $version = $versionResolver->resolve($request);
+        $version = $this->app->get(VersionResolver::class)
+            ->resolve($request);
 
         // Assert
-        self::assertInstanceOf(UriPathResolver::class, $versionResolver);
         self::assertSame('foo', (string)$version);
     }
 
@@ -255,5 +249,12 @@ final class RedaktorServiceProviderTest extends TestCase
 
         // Assert
         self::assertSame($instanceA, $instanceB);
+    }
+
+    protected function getServiceProviders(Application $app): array
+    {
+        return [
+            RedaktorServiceProvider::class,
+        ];
     }
 }

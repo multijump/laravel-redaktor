@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Version;
 
+use DSLabs\Redaktor\Version\Strategy;
 use DSLabs\Redaktor\Version\Version;
-use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Http\Request;
 
 /**
  * Resolve target version from the Request URI path.
  */
-final class UriPathResolver implements VersionResolver
+final class UriPathResolver implements Strategy
 {
     /**
      * @var int

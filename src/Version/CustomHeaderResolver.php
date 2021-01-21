@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Version;
 
+use DSLabs\Redaktor\Version\Strategy;
 use DSLabs\Redaktor\Version\Version;
-use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Http\Request;
 
 /**
  * Resolve target version from a Request custom header.
  */
-final class CustomHeaderResolver implements VersionResolver
+final class CustomHeaderResolver implements Strategy
 {
     /**
      * @var string

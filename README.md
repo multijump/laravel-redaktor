@@ -14,7 +14,7 @@ Inspired by [Stripe's API versioning](https://stripe.com/blog/api-versioning) st
         + [Custom Header](#custom-header)
         + [URI Path](#uri-path)
         + [Query String](#query-string)
-        + [_Custom Resolver_](#_custom-resolver_)
+        + [_Custom Strategy_](#_custom-strategy_)
     * [Revisions](#revisions)
         + [Routing Revisions](#routing-revisions)
         + [Request Revisions](#request-revisions)
@@ -112,21 +112,21 @@ Assuming there is a `GET /api/users` endpoint that renders a non-paginated list 
 
 ### Versioning
 
-API versioning can be implemented using various strategies; all of them with pros and cons. For this reason, Redaktør does not make any assumption and provides version resolvers for the most commonly used strategies.
+API versioning can be implemented using various strategies; all of them with pros and cons. For this reason, Redaktør does not make any assumption and provides an implementation for the most commonly used strategies.
 
-A version resolver is responsible to identify the intended target version. That is, to find out what version of the API the request sender is trying to interact with.
+A strategy is responsible to identify the intended target version. That is, to find out what version of the API the request sender is trying to interact with.
 
 Redaktør does not make any assumptions about your version naming convention; however, it advises to use a date-based version naming approach, where each version name is the date when the revision was implemented/released. I.e.: `2020-10-20`.
 
-By default, a custom `API-Version` header specifying the target version is expected. This default can be configured by modifying the `resolver` section in the published `redaktor.php` configuration file as shown in the following sections.
+By default, a custom `API-Version` header specifying the target version is expected. This default can be configured by modifying the `strategies` configuration in the published `redaktor.php` configuration file, as shown in the following sections.
 
-If no version is defined, or it is defined but does not match one, the latest version is presumed.
+If no version is defined in the request, or it is defined but does not match an existing one, the latest version is presumed.
 
 #### Custom Header
 
-APIs using a custom header as their versioning strategy may use the `\DSLabs\LaravelRedaktor\Version\CustomHeaderResolver` resolver.
+APIs using a custom header as their versioning strategy may use the `\DSLabs\LaravelRedaktor\Version\CustomHeaderResolver` strategy.
 
-The Custom Header resolver is configured as the default resolver; it expects an `API-Version` header indicating the version to be used. E.g.:
+The Custom Header strategy is configured as the default strategy. It expects an `API-Version` header indicating the version to be used. E.g.:
 ```text
    GET /api/users HTTP/1.1
    Host: example.org
@@ -138,12 +138,14 @@ If you would like to use a different header name, just modify the value of the `
    return [
    
        /*
-        * Configure the version resolver to be used.
+        * Configure the version resolver strategies.
         */
-       'resolver' => [
-           'id' => \DSLabs\LaravelRedaktor\Version\CustomHeaderResolver::class,
-           'config' => [
-               'name' => 'Version',
+       'strategies' => [
+           [ 
+               'id' => \DSLabs\LaravelRedaktor\Version\CustomHeaderResolver::class,
+               'config' => [
+                   'name' => 'Version',
+               ],
            ],
        ],
    
@@ -154,25 +156,27 @@ If you would like to use a different header name, just modify the value of the `
 
 #### URI Path
 
-APIs defining the version in the URI (i.e.: `/api/v1/users`) may use `\DSLabs\LaravelRedaktor\Version\UriPathResolver` as their version resolver.
+APIs defining the version in the URI (i.e.: `/api/v1/users`) may use `\DSLabs\LaravelRedaktor\Version\UriPathResolver` as their versioning strategy.
 
-The URI Path resolver extracts the target version from the `index` position (0-based) of the URI path segments. That is, setting `index` to `1` will return `2020-10-20` as the target version for the following request:
+The URI Path strategy extracts the target version from the `index` position (0-based) of the URI path segments. That is, setting `index` to `1` will return `2020-10-20` as the target version for the following request:
 ```text
    GET /api/2020-10-20/users HTTP/1.1
    Host: example.org
 ```
 
-To configure use this resolver, override the `resolver` section in the `/config/redaktor.php` file:
+To use this strategy, override the `strategies` configuration in the `/config/redaktor.php` file:
 ```php
    return [
 
        /*
-        * Configure the version resolver to be used.
+        * Configure the version resolver strategies.
         */
-       'resolver' => [
-           'id' => \DSLabs\LaravelRedaktor\Version\UriPathResolver::class,
-           'config' => [
-               'index' => 1,
+       'strategies' => [
+           [
+               'id' => \DSLabs\LaravelRedaktor\Version\UriPathResolver::class,
+               'config' => [
+                   'index' => 1,
+               ],
            ],
        ],
 
@@ -181,23 +185,24 @@ To configure use this resolver, override the `resolver` section in the `/config/
    ];
 ```
 
-
 #### Query String
 
 APIs accepting the version as a query string parameter, may use the
-`\DSLabs\LaravelRedaktor\Version\QueryStringResolver` resolver.
+`\DSLabs\LaravelRedaktor\Version\QueryStringResolver` strategy.
 
 The parameter name can be configured by changing the `name` property in the `/config/redaktor.php` configuration file:
 ```php
    return [
    
        /*
-        * Configure the version resolver to be used.
+        * Configure the version resolver strategies.
         */
-       'resolver' => [
-           'id' => \DSLabs\LaravelRedaktor\Version\QueryStringResolver::class,
-           'config' => [
-               'name' => 'version',
+       'strategies' => [
+            [
+               'id' => \DSLabs\LaravelRedaktor\Version\QueryStringResolver::class,
+               'config' => [
+                  'name' => 'version',
+               ],
            ],
        ],    
    
@@ -206,11 +211,11 @@ The parameter name can be configured by changing the `name` property in the `/co
    ];
 ```
 
-#### _Custom Resolver_
+#### _Custom Strategy_
 
-If none of the provided version resolvers suits your API's versioning strategy, you can create your own by implementing the `\DSLabs\Redaktor\Version\VersionResolver` interface.
+If none of the provided implementations suits your API's versioning strategy, you can create your own by implementing the `\DSLabs\Redaktor\Version\Strategy` interface.
 
-To use your custom resolver, set its FQCN (Full Qualified Class Name) or alias as the `id` property in `/config/redaktor.php`; the `config` array will be passed as the `$parameters` argument to the Container's `make()` method, giving you the option to configure your custom resolver from the config file.
+To use your custom strategy, set its Full Qualified Class Name (FQCN) or alias as the `id` property in `/config/redaktor.php`; the `config` array will be passed as the `$parameters` argument to the Container's `make()` method, giving you the chance to configure your custom strategy from the config file.
 
 ### Revisions
 

@@ -18,6 +18,7 @@ use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\PSR11RevisionResolver;
 use DSLabs\Redaktor\Registry\Registry;
 use DSLabs\Redaktor\Registry\RevisionResolver;
+use DSLabs\Redaktor\Version\Strategy;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Http\Kernel;
@@ -55,19 +56,26 @@ final class RedaktorServiceProvider extends ServiceProvider
         $this->app->singleton(
             VersionResolver::class,
             static function (Container $container): VersionResolver {
-                $resolverConfig = $container->get('config')->get('redaktor.resolver');
+                $strategiesConfig = $container->get('config')->get('redaktor.strategies');
 
-                $versionResolver = $container->make(
-                    $resolverConfig['id'],
-                    $resolverConfig['config']
+                $strategies = array_map(
+                    static function (array $strategyConfig) use ($container) {
+                        $strategy = $container->make(
+                            $strategyConfig['id'],
+                            $strategyConfig['config']
+                        );
+
+                        if (!$strategy instanceof Strategy) {
+                            // @todo: improve exception message.
+                            throw new \InvalidArgumentException();
+                        }
+
+                        return $strategy;
+                    },
+                    $strategiesConfig
                 );
 
-                if (!$versionResolver instanceof VersionResolver) {
-                    // @todo: improve exception message.
-                    throw new \InvalidArgumentException();
-                }
-
-                return $versionResolver;
+                return new VersionResolver($strategies);
             }
         );
     }

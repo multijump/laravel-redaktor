@@ -5,12 +5,14 @@ declare(strict_types=1);
 return [
 
     /*
-     * Configure the revision name resolver to be used.
+     * Configure the version resolver strategies.
      */
-    'resolver' => [
-        'id' => \DSLabs\LaravelRedaktor\Version\CustomHeaderResolver::class,
-        'config' => [
-            'name' => 'API-Version',
+    'strategies' => [
+        [
+            'id' => \DSLabs\LaravelRedaktor\Version\CustomHeaderResolver::class,
+            'config' => [
+                'name' => 'API-Version',
+            ],
         ],
     ],
 
