@@ -8,13 +8,13 @@ use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
 use DSLabs\LaravelRedaktor\Version\CustomHeaderStrategy;
+use DSLabs\LaravelRedaktor\Version\InvalidStrategyIdException;
 use DSLabs\LaravelRedaktor\Version\QueryStringStrategy;
 use DSLabs\LaravelRedaktor\Version\UriPathStrategy;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
 use DSLabs\Redaktor\Version\VersionResolver;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -64,7 +64,7 @@ final class RedaktorServiceProviderTest extends TestCase
         ]);
 
         // Assert
-        $this->expectException(BindingResolutionException::class);
+        $this->expectException(InvalidStrategyIdException::class);
 
         // Act
         $this->app->make(VersionResolver::class);
@@ -84,7 +84,7 @@ final class RedaktorServiceProviderTest extends TestCase
         ]);
 
         // Assert
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidStrategyIdException::class);
 
         // Act
         $this->app->make(VersionResolver::class);

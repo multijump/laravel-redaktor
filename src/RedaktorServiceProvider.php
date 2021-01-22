@@ -8,6 +8,7 @@ use DSLabs\LaravelRedaktor\Department\IlluminateMessageDepartment;
 use DSLabs\LaravelRedaktor\Department\IlluminateRoutingDepartment;
 use DSLabs\LaravelRedaktor\Middleware\MessageRedaktor;
 use DSLabs\LaravelRedaktor\Middleware\RoutingRedaktor;
+use DSLabs\LaravelRedaktor\Version\InvalidStrategyIdException;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Department\GenericMessageDepartment;
@@ -21,6 +22,7 @@ use DSLabs\Redaktor\Registry\RevisionResolver;
 use DSLabs\Redaktor\Version\Strategy;
 use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 
@@ -60,14 +62,17 @@ final class RedaktorServiceProvider extends ServiceProvider
 
                 $strategies = array_map(
                     static function (array $strategyConfig) use ($container) {
-                        $strategy = $container->make(
-                            $strategyConfig['id'],
-                            $strategyConfig['config']
-                        );
+                        try {
+                            $strategy = $container->make(
+                                $strategyConfig['id'],
+                                $strategyConfig['config']
+                            );
+                        } catch (BindingResolutionException $e) {
+                            throw new InvalidStrategyIdException($strategyConfig['id']);
+                        }
 
                         if (!$strategy instanceof Strategy) {
-                            // @todo: improve exception message.
-                            throw new \InvalidArgumentException();
+                            throw new InvalidStrategyIdException($strategyConfig['id']);
                         }
 
                         return $strategy;
