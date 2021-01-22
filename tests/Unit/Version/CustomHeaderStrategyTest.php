@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace DSLabs\LaravelRedaktor\Tests\Unit\Version;
 
+use DSLabs\LaravelRedaktor\Version\CustomHeaderStrategy;
 use DSLabs\LaravelRedaktor\Version\InvalidRequestException;
-use DSLabs\LaravelRedaktor\Version\UriPathResolver;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 /**
- * @see UriPathResolver
+ * @see CustomHeaderStrategy
  */
-final class UriPathResolverTest extends TestCase
+final class CustomHeaderStrategyTest extends TestCase
 {
-    public function testRetrievesEmptyVersionIfVersionIsNotDefined(): void
+    public function testRetrievesEmptyVersionIfHeaderIsNotDefined(): void
     {
         // Act
-        $request = Request::create('/');
-        $version = (new UriPathResolver(0))->resolve($request);
+        $version = (new CustomHeaderStrategy('Foo'))->resolve(new Request());
 
         //Assert
         self::assertSame('', (string)$version);
@@ -28,13 +27,14 @@ final class UriPathResolverTest extends TestCase
     public function testRetrievesRevisionName(): void
     {
         // Arrange
-        $request = Request::create('/v1/foo/bar');
+        $request = new Request();
+        $request->headers->set('Foo', 'bar');
 
         // Act
-        $version = (new UriPathResolver(0))->resolve($request);
+        $version = (new CustomHeaderStrategy('Foo'))->resolve($request);
 
         // Assert
-        self::assertSame('v1', (string)$version);
+        self::assertSame('bar', (string)$version);
     }
 
     public function testThrowsAnExceptionIfTheArgumentIsNotAnIlluminateRequest(): void
@@ -43,7 +43,7 @@ final class UriPathResolverTest extends TestCase
         $this->expectException(InvalidRequestException::class);
 
         // Act
-        (new UriPathResolver(0))->resolve(
+        (new CustomHeaderStrategy('Foo'))->resolve(
             new SymfonyRequest()
         );
     }

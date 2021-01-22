@@ -124,7 +124,7 @@ If no version is defined in the request, or it is defined but does not match an 
 
 #### Custom Header
 
-APIs using a custom header as their versioning strategy may use the `\DSLabs\LaravelRedaktor\Version\CustomHeaderResolver` strategy.
+APIs using a custom header as their versioning strategy may use the `\DSLabs\LaravelRedaktor\Version\CustomHeaderStrategy` strategy.
 
 The Custom Header strategy is configured as the default strategy. It expects an `API-Version` header indicating the version to be used. E.g.:
 ```text
@@ -134,6 +134,7 @@ The Custom Header strategy is configured as the default strategy. It expects an 
 ```
 
 If you would like to use a different header name, just modify the value of the `name` property in the `redaktor.php` configuration file:
+
 ```php
    return [
    
@@ -142,7 +143,7 @@ If you would like to use a different header name, just modify the value of the `
         */
        'strategies' => [
            [ 
-               'id' => \DSLabs\LaravelRedaktor\Version\CustomHeaderResolver::class,
+               'id' => \DSLabs\LaravelRedaktor\Version\CustomHeaderStrategy::class,
                'config' => [
                    'name' => 'Version',
                ],
@@ -156,7 +157,7 @@ If you would like to use a different header name, just modify the value of the `
 
 #### URI Path
 
-APIs defining the version in the URI (i.e.: `/api/v1/users`) may use `\DSLabs\LaravelRedaktor\Version\UriPathResolver` as their versioning strategy.
+APIs defining the version in the URI (i.e.: `/api/v1/users`) may use `\DSLabs\LaravelRedaktor\Version\UriPathStrategy` as their versioning strategy.
 
 The URI Path strategy extracts the target version from the `index` position (0-based) of the URI path segments. That is, setting `index` to `1` will return `2020-10-20` as the target version for the following request:
 ```text
@@ -165,6 +166,7 @@ The URI Path strategy extracts the target version from the `index` position (0-b
 ```
 
 To use this strategy, override the `strategies` configuration in the `/config/redaktor.php` file:
+
 ```php
    return [
 
@@ -173,7 +175,7 @@ To use this strategy, override the `strategies` configuration in the `/config/re
         */
        'strategies' => [
            [
-               'id' => \DSLabs\LaravelRedaktor\Version\UriPathResolver::class,
+               'id' => \DSLabs\LaravelRedaktor\Version\UriPathStrategy::class,
                'config' => [
                    'index' => 1,
                ],
@@ -188,9 +190,10 @@ To use this strategy, override the `strategies` configuration in the `/config/re
 #### Query String
 
 APIs accepting the version as a query string parameter, may use the
-`\DSLabs\LaravelRedaktor\Version\QueryStringResolver` strategy.
+`\DSLabs\LaravelRedaktor\Version\QueryStringStrategy` strategy.
 
 The parameter name can be configured by changing the `name` property in the `/config/redaktor.php` configuration file:
+
 ```php
    return [
    
@@ -199,7 +202,7 @@ The parameter name can be configured by changing the `name` property in the `/co
         */
        'strategies' => [
             [
-               'id' => \DSLabs\LaravelRedaktor\Version\QueryStringResolver::class,
+               'id' => \DSLabs\LaravelRedaktor\Version\QueryStringStrategy::class,
                'config' => [
                   'name' => 'version',
                ],

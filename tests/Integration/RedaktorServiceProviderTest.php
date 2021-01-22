@@ -7,9 +7,9 @@ namespace DSLabs\LaravelRedaktor\Tests\Integration;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
-use DSLabs\LaravelRedaktor\Version\CustomHeaderResolver;
-use DSLabs\LaravelRedaktor\Version\QueryStringResolver;
-use DSLabs\LaravelRedaktor\Version\UriPathResolver;
+use DSLabs\LaravelRedaktor\Version\CustomHeaderStrategy;
+use DSLabs\LaravelRedaktor\Version\QueryStringStrategy;
+use DSLabs\LaravelRedaktor\Version\UriPathStrategy;
 use DSLabs\Redaktor\ChiefEditorInterface;
 use DSLabs\Redaktor\Registry\InMemoryRegistry;
 use DSLabs\Redaktor\Registry\Registry;
@@ -110,7 +110,7 @@ final class RedaktorServiceProviderTest extends TestCase
         $this->withConfig([
             'redaktor.strategies' => [
                 [
-                    'id' => CustomHeaderResolver::class,
+                    'id' => CustomHeaderStrategy::class,
                     'config' => [
                         'name' => 'X-Version',
                     ],
@@ -135,7 +135,7 @@ final class RedaktorServiceProviderTest extends TestCase
         $this->withConfig([
             'redaktor.strategies' => [
                 [
-                    'id' => QueryStringResolver::class,
+                    'id' => QueryStringStrategy::class,
                     'config' => [
                         'name' => 'foo',
                     ],
@@ -161,7 +161,7 @@ final class RedaktorServiceProviderTest extends TestCase
         $this->withConfig([
             'redaktor.strategies' => [
                 [
-                    'id' => UriPathResolver::class,
+                    'id' => UriPathStrategy::class,
                     'config' => [
                         'index' => 0,
                     ],

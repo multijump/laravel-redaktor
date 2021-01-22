@@ -9,21 +9,21 @@ use DSLabs\Redaktor\Version\Version;
 use Illuminate\Http\Request;
 
 /**
- * Resolve target version from the Request query string.
+ * Resolve target version from the Request URI path.
  */
-final class QueryStringResolver implements Strategy
+final class UriPathStrategy implements Strategy
 {
     /**
-     * @var string
+     * @var int
      */
-    private $name;
+    private $index;
 
     /**
-     * @param string $name Name of the query string parameter to get the target version from.
+     * @param int $index Index (0-based) of the path segment to get the target version from.
      */
-    public function __construct(string $name)
+    public function __construct(int $index)
     {
-        $this->name = $name;
+        $this->index = $index;
     }
 
     /**
@@ -35,8 +35,8 @@ final class QueryStringResolver implements Strategy
             throw InvalidRequestException::make($request);
         }
 
-        return new Version(
-            $request->query($this->name, '')
-        );
+        $segments = explode('/', $request->decodedPath());
+
+        return new Version($segments[$this->index]);
     }
 }

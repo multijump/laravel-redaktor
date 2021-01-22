@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 /**
  * Resolve target version from a Request custom header.
  */
-final class CustomHeaderResolver implements Strategy
+final class CustomHeaderStrategy implements Strategy
 {
     /**
      * @var string
