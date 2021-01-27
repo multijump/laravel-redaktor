@@ -183,7 +183,6 @@ final class RedaktorServiceProviderTest extends TestCase
     {
         // Arrange
         $publishedConfigFilePath = $this->app->configPath('redaktor.php');
-        @unlink($publishedConfigFilePath);
 
         // Act
         Artisan::call('vendor:publish', [
@@ -192,7 +191,6 @@ final class RedaktorServiceProviderTest extends TestCase
 
         // Assert
         self::assertFileEquals(__DIR__ . '/../../config/redaktor.php', $publishedConfigFilePath);
-        @unlink($publishedConfigFilePath);
     }
 
     public function testBindsInMemoryRegistryToEmptyRevisionsRegistryByDefault(): void

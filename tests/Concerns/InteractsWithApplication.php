@@ -32,6 +32,7 @@ trait InteractsWithApplication
         }
 
         $this->app = $this->createApplication();
+        ResourcePublisher::observe($this->app->get('events'));
     }
 
     /**
@@ -40,6 +41,8 @@ trait InteractsWithApplication
     protected function tearDown(): void
     {
         if ($this->app instanceof Application) {
+            ResourcePublisher::revert();
+
             $this->app->flush();
         }
         $this->app = null;

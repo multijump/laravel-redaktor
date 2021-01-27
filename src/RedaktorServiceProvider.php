@@ -49,8 +49,9 @@ final class RedaktorServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(self::SOURCE_CONFIG_PATH, 'redaktor');
 
         $this->publishes([
-            self::SOURCE_CONFIG_PATH => $this->app->configPath('redaktor.php'),
-        ]);
+                self::SOURCE_CONFIG_PATH => $this->app->configPath('redaktor.php'),
+            ]
+        );
     }
 
     private function setupVersionResolver(): void
