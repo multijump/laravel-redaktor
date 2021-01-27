@@ -187,6 +187,7 @@ final class RedaktorServiceProviderTest extends TestCase
         // Act
         Artisan::call('vendor:publish', [
             '--provider' => RedaktorServiceProvider::class,
+            '--tag' => 'config',
         ]);
 
         // Assert
