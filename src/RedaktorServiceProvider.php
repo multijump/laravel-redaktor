@@ -41,6 +41,7 @@ final class RedaktorServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->setupConfiguration();
+        $this->setupMigrations();
         $this->setupMiddlewares();
     }
 
@@ -54,6 +55,22 @@ final class RedaktorServiceProvider extends ServiceProvider
             ],
             'config'
         );
+    }
+
+    private function setupMigrations(): void
+    {
+        $migrationBaseFileName = 'create_redaktor_table.php';
+        $migrationsPath = $this->app->databasePath('migrations');
+        if (self::doesMigrationExist($migrationsPath, $migrationBaseFileName)) {
+            $datePrefix = date('Y_m_d_His');
+            $this->publishes(
+                [
+                    __DIR__ . '/../migrations/create_redaktor_table.php.stub' =>
+                        "{$migrationsPath}/{$datePrefix}_{$migrationBaseFileName}",
+                ],
+                'migrations'
+            );
+        }
     }
 
     private function setupVersionResolver(): void
@@ -136,6 +153,11 @@ final class RedaktorServiceProvider extends ServiceProvider
         } else {
             self::appendMiddlewareToGroup($kernel, 'api', MessageRedaktor::class);
         }
+    }
+
+    private static function doesMigrationExist(string $migrationsPath, string $migrationBaseFileName): bool
+    {
+        return glob("$migrationsPath/*_$migrationBaseFileName", GLOB_NOSORT) === [];
     }
 
     private static function appendMiddlewareToGroup(Kernel $kernel, string $group, string $middleware): void

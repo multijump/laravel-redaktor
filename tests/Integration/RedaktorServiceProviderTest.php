@@ -194,6 +194,19 @@ final class RedaktorServiceProviderTest extends TestCase
         self::assertFileEquals(__DIR__ . '/../../config/redaktor.php', $publishedConfigFilePath);
     }
 
+    public function testPublishesMigrations(): void
+    {
+        // Act
+        Artisan::call('vendor:publish', [
+            '--provider' => RedaktorServiceProvider::class,
+            '--tag' => 'migrations',
+        ]);
+
+        // Assert
+        $migrationsPath = $this->getApplication()->databasePath('migrations');
+        self::assertCount(1, glob("$migrationsPath/*_create_redaktor_table.php"));
+    }
+
     public function testBindsInMemoryRegistryToEmptyRevisionsRegistryByDefault(): void
     {
         // Act

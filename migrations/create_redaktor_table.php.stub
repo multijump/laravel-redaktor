@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+final class CreateRedaktorTable extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('redaktor', static function (Blueprint $table) {
+            $table->string('app_id')->nullable(false)->unique();
+            $table->string('version')->nullable(false);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('redaktor');
+    }
+}
