@@ -51,7 +51,7 @@ final class RedaktorServiceProviderTest extends TestCase
         self::assertSame([], $revisions);
     }
 
-    public function testVersionResolverIsNotInstantiable(): void
+    public function testStrategyIsNotInstantiable(): void
     {
         // Arrange
         $this->withConfig([
@@ -70,7 +70,7 @@ final class RedaktorServiceProviderTest extends TestCase
         $this->app->make(VersionResolver::class);
     }
 
-    public function testVersionResolverDoesNotImplementVersionResolverInterface(): void
+    public function testStrategyDoesNotImplementInterface(): void
     {
         // Arrange
         $this->withConfig([
@@ -90,7 +90,7 @@ final class RedaktorServiceProviderTest extends TestCase
         $this->app->make(VersionResolver::class);
     }
 
-    public function testRetrievesRevisionNameUsingDefaultResolver(): void
+    public function testRetrievesRevisionNameUsingDefaultStrategy(): void
     {
         // Arrange
         $request = new Request();
@@ -104,7 +104,7 @@ final class RedaktorServiceProviderTest extends TestCase
         self::assertSame('foo', (string)$version);
     }
 
-    public function testRetrievesRevisionNameUsingConfiguredCustomHeaderResolver(): void
+    public function testRetrievesRevisionNameUsingCustomHeaderStrategy(): void
     {
         // Arrange
         $this->withConfig([
@@ -129,7 +129,7 @@ final class RedaktorServiceProviderTest extends TestCase
         self::assertSame('foo', (string)$version);
     }
 
-    public function testRetrievesRevisionNameUsingConfiguredQueryStringResolver(): void
+    public function testRetrievesRevisionNameUsingQueryStringStrategy(): void
     {
         // Arrange
         $this->withConfig([
@@ -155,7 +155,7 @@ final class RedaktorServiceProviderTest extends TestCase
         self::assertSame('bar', (string)$version);
     }
 
-    public function testRetrievesRevisionNameUsingConfiguredResolver(): void
+    public function testRetrievesRevisionNameUsingUriPathStrategy(): void
     {
         // Arrange
         $this->withConfig([
