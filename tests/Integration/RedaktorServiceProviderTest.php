@@ -7,6 +7,7 @@ namespace DSLabs\LaravelRedaktor\Tests\Integration;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
+use DSLabs\LaravelRedaktor\Tests\Doubles\DummyStrategy;
 use DSLabs\LaravelRedaktor\Version\CustomHeaderStrategy;
 use DSLabs\LaravelRedaktor\Version\InvalidStrategyIdException;
 use DSLabs\LaravelRedaktor\Version\QueryStringStrategy;
@@ -78,7 +79,6 @@ final class RedaktorServiceProviderTest extends TestCase
                 [
                     'id' => get_class(new class() {
                     }),
-                    'config' => [],
                 ],
             ],
         ]);
@@ -177,6 +177,25 @@ final class RedaktorServiceProviderTest extends TestCase
 
         // Assert
         self::assertSame('foo', (string)$version);
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testStrategyConfigKeyIsOptional(): void
+    {
+        // Arrange
+        $this->withConfig([
+            'redaktor.strategies' => [
+                [
+                    'id' => DummyStrategy::class,
+                ],
+            ],
+        ]);
+
+        // Act
+        $this->getApplication()->get(VersionResolver::class)
+            ->resolve(new Request());
     }
 
     public function testPublishesConfig(): void

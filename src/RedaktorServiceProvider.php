@@ -85,7 +85,7 @@ final class RedaktorServiceProvider extends ServiceProvider
                         try {
                             $strategy = $container->make(
                                 $strategyConfig['id'],
-                                $strategyConfig['config']
+                                $strategyConfig['config'] ?? []
                             );
                         } catch (BindingResolutionException $e) {
                             throw new InvalidStrategyIdException($strategyConfig['id']);
