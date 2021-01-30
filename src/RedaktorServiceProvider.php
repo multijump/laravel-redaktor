@@ -8,6 +8,7 @@ use DSLabs\LaravelRedaktor\Department\IlluminateMessageDepartment;
 use DSLabs\LaravelRedaktor\Department\IlluminateRoutingDepartment;
 use DSLabs\LaravelRedaktor\Middleware\MessageRedaktor;
 use DSLabs\LaravelRedaktor\Middleware\RoutingRedaktor;
+use DSLabs\LaravelRedaktor\Version\DatabaseStrategy;
 use DSLabs\LaravelRedaktor\Version\InvalidStrategyIdException;
 use DSLabs\Redaktor\ChiefEditor;
 use DSLabs\Redaktor\ChiefEditorInterface;
@@ -24,6 +25,7 @@ use DSLabs\Redaktor\Version\VersionResolver;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\ServiceProvider;
 
 final class RedaktorServiceProvider extends ServiceProvider
@@ -101,6 +103,13 @@ final class RedaktorServiceProvider extends ServiceProvider
                 );
 
                 return new VersionResolver($strategies);
+            }
+        );
+
+        $this->app->resolving(
+            DatabaseStrategy::class,
+            static function (DatabaseStrategy $databaseStrategy, Container $container) {
+                $databaseStrategy->withQueryBuilder($container->get(Builder::class));
             }
         );
     }

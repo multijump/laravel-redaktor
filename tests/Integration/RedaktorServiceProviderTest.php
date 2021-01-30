@@ -7,8 +7,10 @@ namespace DSLabs\LaravelRedaktor\Tests\Integration;
 use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithConfiguration;
+use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithDatabase;
 use DSLabs\LaravelRedaktor\Tests\Doubles\DummyStrategy;
 use DSLabs\LaravelRedaktor\Version\CustomHeaderStrategy;
+use DSLabs\LaravelRedaktor\Version\DatabaseStrategy;
 use DSLabs\LaravelRedaktor\Version\InvalidStrategyIdException;
 use DSLabs\LaravelRedaktor\Version\QueryStringStrategy;
 use DSLabs\LaravelRedaktor\Version\UriPathStrategy;
@@ -28,6 +30,7 @@ final class RedaktorServiceProviderTest extends TestCase
 {
     use InteractsWithApplication;
     use InteractsWithConfiguration;
+    use InteractsWithDatabase;
 
     public function testDefaultsToCustomHeaderResolver(): void
     {
@@ -177,6 +180,39 @@ final class RedaktorServiceProviderTest extends TestCase
 
         // Assert
         self::assertSame('foo', (string)$version);
+    }
+
+    public function testSetsUpDatabaseStrategy(): void
+    {
+        // Arrange
+        Artisan::call(
+            'vendor:publish',
+            ['--provider' => RedaktorServiceProvider::class]
+        );
+        Artisan::call('migrate');
+
+        $this->insertInto('redaktor', [
+            'version' => $expectedVersion = 'foo',
+            'app_id' => $appId = 'bar',
+        ]);
+
+        $this->withConfig(
+            'redaktor.strategies',
+            [
+                [
+                    'id' => DatabaseStrategy::class,
+                ],
+            ]
+        );
+
+        // Act
+        $request = new Request();
+        $request->headers->set('Application-Id', $appId);
+        $version = $this->app->get(VersionResolver::class)
+            ->resolve($request);
+
+        // Assert
+        self::assertSame($expectedVersion, (string)$version);
     }
 
     /**
