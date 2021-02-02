@@ -112,9 +112,9 @@ Assuming there is a `GET /api/users` endpoint that renders a non-paginated list 
 
 ### Versioning
 
-API versioning can be implemented using various strategies; all of them with pros and cons. For this reason, Redaktør does not make any assumption and provides an implementation for the most commonly used strategies.
+API versioning can be implemented using various strategies; all of them with pros and cons. For this reason, Redaktør lets you choose what strategy best suits your needs by providing an implementation for the most commonly used strategies.
 
-A strategy is responsible to identify the intended target version. That is, to find out what version of the API the request sender is trying to interact with.
+A strategy is responsible to identify the intended target version. That is, to find out what version of the API the integrator is trying to interact with.
 
 Redaktør does not make any assumptions about your version naming convention; however, it advises to use a date-based version naming approach, where each version name is the date when the revision was implemented/released. I.e.: `2020-10-20`.
 
@@ -213,6 +213,71 @@ The parameter name can be configured by changing the `name` property in the `/co
       
    ];
 ```
+
+#### Database
+
+This strategy resolves the target version from the database based on an application identifier sent in the request. By default, the identifier is expected to be sent as an `Application-Id` header.
+
+A database migration is included out of the box. To make use of it, publish the migration file to your application:
+
+```sh
+  php artisan vendor:publish --provider="DSLabs\LaravelRedaktor\RedaktorServiceProvider" --tag="migrations"
+```
+
+Migrate the database:
+
+```sh
+  php artisan migrate
+```
+
+And configure it in the `redaktor.php` config file.
+
+ ```php
+   return [
+
+       /*
+        * Configure the version resolver strategies.
+        */
+       'strategies' => [
+           [
+               'id' => \DSLabs\LaravelRedaktor\Version\DatabaseStrategy::class,
+           ],
+       ],
+
+      // ...
+
+   ];
+```
+
+By default, the Database strategy will look up for the value store in the `version` column from the `redaktor` database table where the `app_id` column matches the value specified in the `Application-Id` header. However, you may configure these parameters as demonstrated below:
+
+```php
+   return [
+
+       /*
+        * Configure the version resolver strategies.
+        */
+       'strategies' => [
+            [
+               'id' => \DSLabs\LaravelRedaktor\Version\DatabaseStrategy::class,
+               'config' => [
+                   'table' => 'versions',
+                   'column' => 'pin_version',
+                   'filter' => static function (Request $request): array {
+                       return [
+                           'client_id' => $request->header('Client-Id'),
+                       ];
+                   }
+               ],
+           ],
+       ],
+
+      // ...
+
+   ];
+```
+
+If provided, the `filter` value must be a callable returning an associative array where the key is the column name.
 
 #### _Custom Strategy_
 
