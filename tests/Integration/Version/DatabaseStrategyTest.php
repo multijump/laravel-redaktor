@@ -9,6 +9,7 @@ use DSLabs\LaravelRedaktor\RedaktorServiceProvider;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithApplication;
 use DSLabs\LaravelRedaktor\Tests\Concerns\InteractsWithDatabase;
 use DSLabs\LaravelRedaktor\Version\DatabaseStrategy;
+use DSLabs\Redaktor\Version\UnresolvedVersionException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -49,6 +50,46 @@ final class DatabaseStrategyTest extends TestCase
 
         // Act
         $strategy->resolve(new \stdClass());
+    }
+
+    public function testThrowAnUnresolvedVersionExceptionIfNoIdentifierSent(): void
+    {
+        // Arrange
+        Schema::create('redaktor', static function (Blueprint $table): void {
+            $table->string('app_id')->nullable(false)->unique();
+            $table->string('version')->nullable(false);
+        });
+        $strategy = new DatabaseStrategy();
+        $strategy->withQueryBuilder(
+            $this->getQueryBuilder()
+        );
+
+        // Assert
+        $this->expectException(UnresolvedVersionException::class);
+
+        // Act
+        $strategy->resolve(new Request());
+    }
+
+    public function testThrowAnUnresolvedVersionExceptionIfNoIdentifierMatched(): void
+    {
+        // Arrange
+        Schema::create('redaktor', static function (Blueprint $table): void {
+            $table->string('app_id')->nullable(false)->unique();
+            $table->string('version')->nullable(false);
+        });
+        $strategy = new DatabaseStrategy();
+        $strategy->withQueryBuilder(
+            $this->getQueryBuilder()
+        );
+
+        // Assert
+        $this->expectException(UnresolvedVersionException::class);
+
+        // Act
+        $request = new Request();
+        $request->headers->set('Application-Id', 'foo');
+        $strategy->resolve($request);
     }
 
     public function testFetchVersionUsingDefaultValues(): void

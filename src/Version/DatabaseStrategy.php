@@ -4,6 +4,7 @@ namespace DSLabs\LaravelRedaktor\Version;
 
 use DSLabs\LaravelRedaktor\Guard\IlluminateGuard;
 use DSLabs\Redaktor\Version\Strategy;
+use DSLabs\Redaktor\Version\UnresolvedVersionException;
 use DSLabs\Redaktor\Version\Version;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -68,6 +69,10 @@ class DatabaseStrategy implements Strategy
                 $this->resolveFilter($request)
             )
             ->value($this->column);
+
+        if (!$version) {
+            throw new UnresolvedVersionException($request);
+        }
 
         return new Version($version);
     }
