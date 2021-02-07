@@ -51,27 +51,31 @@ final class RedaktorServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(self::SOURCE_CONFIG_PATH, 'redaktor');
 
-        $this->publishes(
-            [
-                self::SOURCE_CONFIG_PATH => $this->app->configPath('redaktor.php'),
-            ],
-            'config'
-        );
+        if ($this->app->runningInConsole()) {
+            $this->publishes(
+                [
+                    self::SOURCE_CONFIG_PATH => $this->app->configPath('redaktor.php'),
+                ],
+                'config'
+            );
+        }
     }
 
     private function setupMigrations(): void
     {
-        $migrationBaseFileName = 'create_redaktor_table.php';
-        $migrationsPath = $this->app->databasePath('migrations');
-        if (self::doesMigrationExist($migrationsPath, $migrationBaseFileName)) {
-            $datePrefix = date('Y_m_d_His');
-            $this->publishes(
-                [
-                    __DIR__ . '/../migrations/create_redaktor_table.php.stub' =>
-                        "{$migrationsPath}/{$datePrefix}_{$migrationBaseFileName}",
-                ],
-                'migrations'
-            );
+        if ($this->app->runningInConsole()) {
+            $migrationBaseFileName = 'create_redaktor_table.php';
+            $migrationsPath = $this->app->databasePath('migrations');
+            if (self::doesMigrationExist($migrationsPath, $migrationBaseFileName)) {
+                $datePrefix = date('Y_m_d_His');
+                $this->publishes(
+                    [
+                        __DIR__ . '/../migrations/create_redaktor_table.php.stub' =>
+                            "{$migrationsPath}/{$datePrefix}_{$migrationBaseFileName}",
+                    ],
+                    'migrations'
+                );
+            }
         }
     }
 
