@@ -139,7 +139,7 @@ If you would like to use a different header name, just modify the value of the `
    return [
    
        /*
-        * Configure the version resolver strategies.
+        * Configure your versioning strategies.
         */
        'strategies' => [
            [ 
@@ -171,7 +171,7 @@ To use this strategy, override the `strategies` configuration in the `/config/re
    return [
 
        /*
-        * Configure the version resolver strategies.
+        * Configure your versioning strategies.
         */
        'strategies' => [
            [
@@ -198,7 +198,7 @@ The parameter name can be configured by changing the `name` property in the `/co
    return [
    
        /*
-        * Configure the version resolver strategies.
+        * Configure your versioning strategies.
         */
        'strategies' => [
             [
@@ -236,7 +236,7 @@ And configure it in the `redaktor.php` config file.
    return [
 
        /*
-        * Configure the version resolver strategies.
+        * Configure your versioning strategies.
         */
        'strategies' => [
            [
@@ -255,7 +255,7 @@ By default, the Database strategy will look up for the value store in the `versi
    return [
 
        /*
-        * Configure the version resolver strategies.
+        * Configure your versioning strategies.
         */
        'strategies' => [
             [

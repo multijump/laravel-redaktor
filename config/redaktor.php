@@ -5,7 +5,7 @@ declare(strict_types=1);
 return [
 
     /*
-     * Configure the version resolver strategies.
+     * Configure your versioning strategies.
      */
     'strategies' => [
         [
@@ -22,7 +22,7 @@ return [
     'revisions' => [
         //  '2020-04-10' => [
         //      \App\Http\Revisions\AddContentLengthHeader::class,
-        // ]
+        // ],
     ],
 
 ];
