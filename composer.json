@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": "^7.3|^8",
-        "ds-labs/redaktor": "dev-main",
+        "ds-labs/redaktor": "^0.1",
         "illuminate/http": "^6|^7|^8",
         "illuminate/routing": "^6|^7|^8",
         "illuminate/support": "^6|^7|^8"
